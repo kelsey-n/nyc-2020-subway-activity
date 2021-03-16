@@ -1,0 +1,22 @@
+html, body, #grid-container, #sidebar, #mapcontainer {
+  height: 100%;
+  margin: 0;
+}
+#grid-container {
+  display: grid;
+  grid-template-columns: 25% 75%;
+}
+
+#sidebar {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  background: #F0F0F0;
+}
+
+#mapcontainer {
+  flex-grow: 1;
+}
+
+#slider {
+  margin-left: 10px;
+}
