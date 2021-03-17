@@ -14,6 +14,19 @@ map.addControl(new mapboxgl.NavigationControl({
   showZoom: true
 }));
 
+// Create array of objects to hold max and min perc_change values for each month (to dynamically populate range slider):
+var month_maxmin = [
+  {
+    month: 2,
+    min_percchange_entries: -83,
+    max_percchange_entries: 56,
+    min_percchange_exits: -80,
+    max_percchange_exits: 56
+  }
+]
+
+console.log(month_maxmin[0].min_percchange_entries)
+
 
 map.on('style.load', function() {
   // add the geojson source
@@ -104,11 +117,15 @@ map.on('style.load', function() {
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
 
+  //var layer_id = 'entries'
+
   $('#exits-button').click(function () {
     $('#entries-button').removeClass('active');
     $('#exits-button').addClass('active');
     map.setLayoutProperty('entries-layer', 'visibility','none');
     map.setLayoutProperty('exits-layer', 'visibility','visible');
+    // set filter to only month, not range:
+
   })
 
   $('#entries-button').click(function () {
@@ -116,19 +133,70 @@ map.on('style.load', function() {
     $('#entries-button').addClass('active');
     map.setLayoutProperty('entries-layer', 'visibility','visible');
     map.setLayoutProperty('exits-layer', 'visibility','none');
+    //set filter to only month, not range:
+
   })
 
 
-  document.getElementById('slider').addEventListener('input', function(e) {
-  var month = parseInt(e.target.value);
-  // update the filter on the map layer
-  map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], month]);
-  map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], month]);
+  $(function() {
+    $( "#slider-month" ).slider({
+      'min': 1,
+      'max': 12,
+      'animate': 'slow', //can remove since does not animate the slider ui itself, just movement from A to B
+      'slide': function(event,ui) {
+        window['month'] = parseInt(ui.value);
+        map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
+        map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
 
-  // create variable to convert number to month here
+        // create variable to convert number to month here:
 
+        // represent the month in text here:
+        //document.getElementById('active-month').innerText = month;
+        if (window['month'] > 1) {
+          $( "#slider-perc-range" ).slider("enable");
+          $( "#slider-perc-range" ).slider( "values", 0, -100 );
+          $( "#slider-perc-range" ).slider( "values", 1, 100 )
+        }
+        else if (window['month'] === 1) {
+          $( "#slider-perc-range" ).slider("disable");
+        }
 
-  document.getElementById('active-month').innerText = month;
+      }
+    });
   });
+
+
+  // TO DO: if month slider moves, reset range slider - DONE, just need to reset it to the min/max of relevant month...
+  //TO DO: separate entries and exits range slider functions so can set min & max values dynamically
+  //ISSUE: when switching layers, range slider does not reset
+  //using if ($('#entries-button').hasClass('active')) {}
+
+
+  $(function() {
+    $( "#slider-perc-range" ).slider({
+      'disabled': true,
+      'min': -100,
+      'max': 100,
+      'step': 1,
+      'range': true,
+      'values': [-100,100], //initial values for each handle of the range slider = min & max of perc_change applied to the map
+      'slide': function(event,ui) {
+        map.setFilter('entries-layer', ['all',
+                                        ['==', ['number', ['get', 'month']], window['month']],
+                                        ['<=', ['number', ['get', 'perc_change_entries']], ui.values[1]],
+                                        ['>=', ['number', ['get', 'perc_change_entries']], ui.values[0]]
+                                      ]);
+
+        map.setFilter('exits-layer', ['all',
+                                        ['==', ['number', ['get', 'month']], window['month']],
+                                        ['<=', ['number', ['get', 'perc_change_exits']], ui.values[1]],
+                                        ['>=', ['number', ['get', 'perc_change_exits']], ui.values[0]]
+                                      ]);
+
+        $( "#price" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+      }
+    });
+  })
+
 
 })

@@ -17,6 +17,18 @@ html, body, #grid-container, #sidebar, #mapcontainer {
   flex-grow: 1;
 }
 
-#slider {
-  margin-left: 10px;
+#slider-month, #slider-perc-range {
+  margin: 30px;
+}
+
+.ui-slider:hover {
+  cursor: pointer;
+}
+
+.ui-slider-handle:hover {
+  cursor: pointer;
+}
+
+.ui-slider-handle {
+  outline: none;
 }
