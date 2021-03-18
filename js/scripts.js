@@ -14,7 +14,7 @@ map.addControl(new mapboxgl.NavigationControl({
   showZoom: true
 }));
 
-// Create array to convert number in data to month:
+// Create array to convert 'month' number in data to month word:
 var months = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec']
 
 map.on('style.load', function() {
@@ -105,6 +105,41 @@ map.on('style.load', function() {
     },
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
+
+  // add an empty data source, which we will use to highlight the station that the user is hovering over
+  map.addSource('highlight-feature', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  });
+
+  // add a layer for the highlighted lot
+  map.addLayer({
+    id: 'highlight-station',
+    type: 'line',
+    source: 'highlight-feature',
+    paint: {
+      'line-width': 5,
+      //'line-opacity': 0.9,
+      'line-color': 'white',
+      // 'circle-radius': [
+      //   'interpolate',
+      //   ['linear'],
+      //   ['get', 'entries'],
+      //   1000, 2,
+      //   100000, 7,
+      //   500000, 10,
+      //   700000, 12,
+      //   1000000, 15
+      // ],
+      // 'line-color': 'black',
+      //'circle-stroke-opacity': 0.4,
+      //'circle-stroke-width': 1
+    },
+    'circle-opacity': 0.4
+  });
 
   $('#exits-button').click(function () {
     $('#entries-button').removeClass('active');
@@ -223,5 +258,57 @@ map.on('style.load', function() {
       $('#refresh-button').text('Refresh Timeline')
     }
   })
+
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false
+  });
+  map.on('mousemove', function (e) {
+    // query for the features under the mouse in both layers:
+    var features = map.queryRenderedFeatures(e.point, {
+        layers: ['entries-layer', 'exits-layer'],
+    });
+
+    // if only one layer is selected by the user, we want to populate the popup with only the data from that layer:
+    if (features.length == 1) {
+      var hoveredFeature = features[0];
+      var station_name = hoveredFeature.properties.stop_name;
+      // if it is the entries layer use that data
+      if (features[0].layer.id === 'entries-layer') {
+        var num_entries = hoveredFeature.properties.entries;
+        var perc_change_entries = hoveredFeature.properties.perc_change_entries
+        var popupContent = `
+          <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
+          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries}% change from __</div>
+        `;
+        popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
+        // set this lot's polygon feature as the data for the highlight source
+        map.getSource('highlight-feature').setData(hoveredFeature.geometry);
+      } else if (features[0].layer.id === 'exits-layer') {
+        var num_exits = hoveredFeature.properties.exits;
+        var perc_change_exits = hoveredFeature.properties.perc_change_exits
+          var popupContent2 = `
+            <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits}% change from __</div>
+          `;
+          popup.setLngLat(e.lngLat).setHTML(popupContent2).addTo(map);
+          // set this lot's polygon feature as the data for the highlight source
+          map.getSource('highlight-feature').setData(hoveredFeature.geometry);
+        }
+      map.getCanvas().style.cursor = 'pointer';
+
+    }   else {
+      // remove the Popup
+      popup.remove();
+      map.getCanvas().style.cursor = '';
+      map.getSource('highlight-feature').setData({
+        'type': 'FeatureCollection',
+        'features': []
+      });
+    }
+  });
 
 })
