@@ -25,12 +25,15 @@
         <h2>Month: <label id='active-month'>Jan</label></h2>
         <div id='slider-month'></div>
         <div id='slider-perc-range'></div>
+        <label for="checkbox-1">Show Outliers</label>
+        <input type="checkbox" name="checkbox-1" class="outlier-checkbox">
         <p>
          <label for = "price">Perc change range:</label>
          <input type = "text" id = "price"
             style = "border:0; color:#b9cd6d; font-weight:bold;">
         </p>
       </div>
+      <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
     </div>
 
     <div id='mapcontainer'>

@@ -14,19 +14,8 @@ map.addControl(new mapboxgl.NavigationControl({
   showZoom: true
 }));
 
-// Create array of objects to hold max and min perc_change values for each month (to dynamically populate range slider):
-var month_maxmin = [
-  {
-    month: 2,
-    min_percchange_entries: -83,
-    max_percchange_entries: 56,
-    min_percchange_exits: -80,
-    max_percchange_exits: 56
-  }
-]
-
-console.log(month_maxmin[0].min_percchange_entries)
-
+// Create array to convert number in data to month:
+var months = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec']
 
 map.on('style.load', function() {
   // add the geojson source
@@ -117,15 +106,11 @@ map.on('style.load', function() {
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
 
-  //var layer_id = 'entries'
-
   $('#exits-button').click(function () {
     $('#entries-button').removeClass('active');
     $('#exits-button').addClass('active');
     map.setLayoutProperty('entries-layer', 'visibility','none');
     map.setLayoutProperty('exits-layer', 'visibility','visible');
-    // set filter to only month, not range:
-
   })
 
   $('#entries-button').click(function () {
@@ -133,8 +118,6 @@ map.on('style.load', function() {
     $('#entries-button').addClass('active');
     map.setLayoutProperty('entries-layer', 'visibility','visible');
     map.setLayoutProperty('exits-layer', 'visibility','none');
-    //set filter to only month, not range:
-
   })
 
 
@@ -142,16 +125,17 @@ map.on('style.load', function() {
     $( "#slider-month" ).slider({
       'min': 1,
       'max': 12,
-      'animate': 'slow', //can remove since does not animate the slider ui itself, just movement from A to B
       'slide': function(event,ui) {
         window['month'] = parseInt(ui.value);
         map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
         map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
 
-        // create variable to convert number to month here:
+        // Since sliding the month-slider automatically removes the range filter (if any), set button text to 'refresh timeline':
+        $('#refresh-button').text('Refresh Timeline')
 
-        // represent the month in text here:
-        //document.getElementById('active-month').innerText = month;
+        // represent the month in text here using months variable:
+        document.getElementById('active-month').innerText = months[window['month']-1];
+
         if (window['month'] > 1) {
           $( "#slider-perc-range" ).slider("enable");
           $( "#slider-perc-range" ).slider( "values", 0, -100 );
@@ -166,11 +150,14 @@ map.on('style.load', function() {
   });
 
 
-  // TO DO: if month slider moves, reset range slider - DONE, just need to reset it to the min/max of relevant month...
-  //TO DO: separate entries and exits range slider functions so can set min & max values dynamically
-  //ISSUE: when switching layers, range slider does not reset
-  //using if ($('#entries-button').hasClass('active')) {}
-
+  // DONE: if month slider moves, reset range slider
+  //ISSUE: outliers only come back if month slider is moved, not if toggling between entries/exit layers
+  //SOLUTION: refresh button for range slider AND month slider - same button, vary text.
+  //reset range filter brings back all outliers, but toggling between layers does not. keep this way.
+  //first click: ALL stations (incl outliers) should reappear and range slider should be reset while staying in same mth & layer
+  //second click: month slider reset to jan
+  //($('#entries-button').hasClass('active')) {}
+  // ISSUE: outlier checkbox not working. default should be disabled; enabled when in a month with outlier vals
 
   $(function() {
     $( "#slider-perc-range" ).slider({
@@ -179,7 +166,7 @@ map.on('style.load', function() {
       'max': 100,
       'step': 1,
       'range': true,
-      'values': [-100,100], //initial values for each handle of the range slider = min & max of perc_change applied to the map
+      'values': [-100,100], //initial values for each handle of the range slider
       'slide': function(event,ui) {
         map.setFilter('entries-layer', ['all',
                                         ['==', ['number', ['get', 'month']], window['month']],
@@ -192,11 +179,49 @@ map.on('style.load', function() {
                                         ['<=', ['number', ['get', 'perc_change_exits']], ui.values[1]],
                                         ['>=', ['number', ['get', 'perc_change_exits']], ui.values[0]]
                                       ]);
-
+        //temporary text box to see vals of range slider: delete later
         $( "#price" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+
+        //if range slider is used, set text in refresh button to 'Reset range filter':
+        $('#refresh-button').text('Reset Range Filter')
       }
     });
   })
 
+  //$(".outlier-checkbox").checkboxradio({}); not sure why this is not working...
+
+  //NOT WORKING:
+  $('.outlier-checkbox').bind('change', function(){
+    if($(this).is(':checked')){
+      map.setFilter('entries-layer', ['all',
+                                      ['==', ['number', ['get', 'month']], window['month']],
+                                      ['>=', ['number', ['get', 'perc_change_entries']], 100],
+                                      ['<=', ['number', ['get', 'perc_change_entries']], -100]
+                                    ]);
+
+      map.setFilter('exits-layer', ['all',
+                                      ['==', ['number', ['get', 'month']], window['month']],
+                                      ['>=', ['number', ['get', 'perc_change_exits']], 100],
+                                      ['<=', ['number', ['get', 'perc_change_exits']], -100]
+                                    ]);
+    }
+  });
+
+  $('#refresh-button').click(function () {
+    if ($('#refresh-button').text() === 'Refresh Timeline') {
+      $( "#slider-month" ).slider("value", 1);
+      $( "#slider-perc-range" ).slider("disable");
+      document.getElementById('active-month').innerText = 'Jan';
+      map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]);
+      map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], 1]);
+    }
+    else if ($('#refresh-button').text() === 'Reset Range Filter') {
+      $( "#slider-perc-range" ).slider( "values", 0, -100 );
+      $( "#slider-perc-range" ).slider( "values", 1, 100 );
+      map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
+      map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
+      $('#refresh-button').text('Refresh Timeline')
+    }
+  })
 
 })
