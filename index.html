@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title>2020 Subway Activity - NYC</title>
+  <title>2020 Subway Ridership - NYC</title>
 
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
@@ -16,9 +16,40 @@
 
 <body>
 
+  <div id='sidenav-menu'>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <p class='sidenav-menu-text'>WELCOME text here. ID=sidenav-menu</p>
+  </div>
+
+  <p id='about-menu-button-text' style="display:none;">Sidenav menu text here. ID=ABOUT menu</p>
+  <p id='context-menu-button-text' style="display:none;">Sidenav menu text here. ID=CONTEXT menu</p>
+  <p id='usemap-menu-button-text' style="display:none;">Sidenav menu text here. ID=USAGE menu</p>
+  <p id='legend-menu-button-text' style="display:none;">Sidenav menu text here. ID=LEGEND menu</p>
+
   <div id='grid-container'>
 
     <div id='sidebar'>
+
+      <div class='sidenav-buttons'>
+        <button class="sidenav-button" id="context-menu-button" onclick="openNav()" >
+          <span class='original'>Why?</span>
+          <span class='onhover'>Context</span>
+        </button>
+        <button class="sidenav-button" id="about-menu-button" onclick="openNav()" >
+          <span class='original'>What?</span>
+          <span class='onhover'>About this map</span>
+        </button>
+        <button class="sidenav-button" id="usemap-menu-button" onclick="openNav()" >
+          <span class='original'>How?</span>
+          <span class='onhover'>How to use this map</span>
+        </button>
+        <button class="sidenav-button" id="legend-menu-button" onclick="openNav()" >
+          <span class='original'>Circles here</span>
+          <span class='onhover'>Legend</span>
+        </button>
+      </div>
+
+
       <button type="button" id='entries-button' class="btn btn-outline-dark btn-sm active" >Entries</button>
       <button type="button" id='exits-button' class="btn btn-outline-dark btn-sm">Exits</button>
       <div>
@@ -36,6 +67,9 @@
       <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
     </div>
 
+    <div id='legend-controls'>
+      <p>Legend Controls</p>
+    </div>
     <div id='mapcontainer'>
     </div>
 

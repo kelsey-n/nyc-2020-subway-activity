@@ -2,19 +2,102 @@ html, body, #grid-container, #sidebar, #mapcontainer {
   height: 100%;
   margin: 0;
 }
+
 #grid-container {
   display: grid;
   grid-template-columns: 25% 75%;
+  grid-template-rows: 10% 90%;
+  transition: margin-left .5s;
+}
+
+/* The navigation menu links */
+.sidenav-buttons button {
+  display: block;
+}
+
+/* Hover control for buttons */
+.sidenav-buttons button .onhover {
+  display: none;
+}
+
+.sidenav-buttons button:hover .original {
+  display: none;
+}
+
+.sidenav-buttons button:hover .onhover {
+  display: inline;
+}
+
+/* The side navigation menu - originally hidden*/
+#sidenav-menu {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with jquery */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 10%; /* Stay at the top */
+  left: 0;
+  background-color: #111; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 0px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+#sidenav-menu p {
+  width: 250px; /* Keeps the width of the text fixed to get rid of 'text squishing' effect on transition */
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+/* Position and style the close button (top right corner) */
+.closebtn {
+  top: 0;
+  text-decoration: none;
+  font-size: 30px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: #f1f1f1;
+  text-decoration: none;
+}
+
+#legend-controls {
+  top: 60px;
+  left: 400px;
+  position: fixed;
+  z-index: 1; /* places controls on top of map container */
+}
+
+#legend-controls::before {
+  content: "";
+  background-color: white;
+  opacity: 0.7;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  border-radius: 30px;
 }
 
 #sidebar {
   grid-column-start: 1;
   grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 3;
   background: #F0F0F0;
 }
 
 #mapcontainer {
   flex-grow: 1;
+  grid-row-start: 2;
+  grid-row-end: 3;
 }
 
 #slider-month, #slider-perc-range {

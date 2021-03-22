@@ -1,5 +1,24 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoia25hbmFuIiwiYSI6ImNrbDlsMXNmNjI3MnEyb25yYjNremFwYXQifQ.l6loLOR-pOL_U2kzWBSQNQ';
 
+// This function will open the side navigation menu when user clicks on any of the floating menu buttons
+// and populate the menu with text relevant to the button that was clicked
+function openNav() {
+  /* Set the width of the side navigation to be viewable at 250px, and set the left margin of the page content to 250px to shift page content over*/
+  document.getElementById("sidenav-menu").style.width = "250px";
+  document.getElementById("grid-container").style.marginLeft = "250px";
+  $('.sidenav-button').click(function() {
+    var button_id = $(this).attr('id') //pull out the id name of the clicked sidenav button
+    var menu_text = $(`#${button_id}-text`).text(); //get the menu text for the clicked button
+    $(".sidenav-menu-text").text(menu_text); //populate the sidenav menu with the appropriate text
+  })
+}
+
+/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+function closeNav() {
+  document.getElementById("sidenav-menu").style.width = "0";
+  document.getElementById("grid-container").style.marginLeft = "0";
+}
+
 // Initialize mapboxgl map and insert into mapcontainer div:
 var map = new mapboxgl.Map({
   container: 'mapcontainer', // container ID
@@ -18,10 +37,14 @@ map.addControl(new mapboxgl.NavigationControl({
 var months = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec']
 
 map.on('style.load', function() {
+
+  openNav(); //load welcome message
+
   // add the geojson source
   map.addSource('activity-data', {
     type: 'geojson',
-    data: 'data/subwayactivitydata.geojson'
+    data: 'data/subwayactivitydata.geojson',
+    generateId: true //each feature will get a unique ID, which can be used for data-driven styling upon hover
   });
 
   map.addLayer({
@@ -32,19 +55,67 @@ map.on('style.load', function() {
       'visibility': 'visible'
     },
     'paint': {
+    // The feature-state dependent circle-radius expression will render
+    // the radius size according to its magnitude when
+    // a feature's hover state is set to true
       'circle-radius': [
-        'interpolate',
-        ['linear'],
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        [
+          'interpolate', ['linear'],
+          ['get', 'entries'],
+          1000, 2,
+          100000, 7,
+          500000, 10,
+          700000, 12,
+          1000000, 15,
+        ],
+      [
+        'interpolate', ['linear'],
         ['get', 'entries'],
         1000, 2,
         100000, 7,
         500000, 10,
         700000, 12,
         1000000, 15
+      ]
       ],
-      'circle-stroke-color': 'black', //use these properties to highlight selected stations
+      'circle-stroke-color': [
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        [
+          'match',
+          ['get', 'line_color'],
+          'blue', '#0039A6',
+          'brown', '#996633',
+          'gray', '#A7A9AC',
+          'green', '#00933C',
+          'lightgreen', '#6CBE45',
+          'orange', '#FF6319',
+          'purple', '#B933AD',
+          'red', '#EE352E',
+          'shuttlegray', '#808183',
+          'yellow', '#FCCC0A',
+          'white' //'multiple' line_colors
+        ],
+        '#000000'
+      ],
       //'circle-stroke-opacity': 1,
-      'circle-stroke-width': 1,
+      'circle-stroke-width': [
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        1.5,
+        0
+      ],
       'circle-color': [
         'match',
         ['get', 'line_color'],
@@ -60,7 +131,15 @@ map.on('style.load', function() {
         'yellow', '#FCCC0A',
         'white' //'multiple' line_colors
       ],
-      'circle-opacity': 0.8
+      'circle-opacity': [
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        1,
+        0.7
+      ]
     },
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
@@ -73,19 +152,66 @@ map.on('style.load', function() {
       'visibility': 'none'
     },
     'paint': {
+    // The feature-state dependent circle-radius expression will render
+    // the radius size according to its magnitude when
+    // a feature's hover state is set to true
       'circle-radius': [
-        'interpolate',
-        ['linear'],
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        [
+          'interpolate', ['linear'],
+          ['get', 'exits'],
+          1000, 2,
+          100000, 7,
+          500000, 10,
+          700000, 12,
+          1000000, 15,
+        ],
+      [
+        'interpolate', ['linear'],
         ['get', 'exits'],
         1000, 2,
         100000, 7,
         500000, 10,
         700000, 12,
         1000000, 15
+      ]
       ],
-      'circle-stroke-color': 'black', //use these properties to highlight selected stations
-      //'circle-stroke-opacity': 1,
-      'circle-stroke-width': 1,
+      'circle-stroke-color': [
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        [
+          'match',
+          ['get', 'line_color'],
+          'blue', '#0039A6',
+          'brown', '#996633',
+          'gray', '#A7A9AC',
+          'green', '#00933C',
+          'lightgreen', '#6CBE45',
+          'orange', '#FF6319',
+          'purple', '#B933AD',
+          'red', '#EE352E',
+          'shuttlegray', '#808183',
+          'yellow', '#FCCC0A',
+          'white' //'multiple' line_colors
+        ],
+        '#000000'
+      ],
+      'circle-stroke-width': [
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        1.5,
+        0
+      ],
       'circle-color': [
         'match',
         ['get', 'line_color'],
@@ -101,45 +227,19 @@ map.on('style.load', function() {
         'yellow', '#FCCC0A',
         'white' //'multiple' line_colors
       ],
-      'circle-opacity': 0.8
+      'circle-opacity': [
+        'case',
+        ['boolean',
+          ['feature-state', 'hover'],
+          false
+        ],
+        1,
+        0.7
+      ]
     },
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
 
-  // add an empty data source, which we will use to highlight the station that the user is hovering over
-  map.addSource('highlight-feature', {
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features: []
-    }
-  });
-
-  // add a layer for the highlighted lot
-  map.addLayer({
-    id: 'highlight-station',
-    type: 'line',
-    source: 'highlight-feature',
-    paint: {
-      'line-width': 5,
-      //'line-opacity': 0.9,
-      'line-color': 'white',
-      // 'circle-radius': [
-      //   'interpolate',
-      //   ['linear'],
-      //   ['get', 'entries'],
-      //   1000, 2,
-      //   100000, 7,
-      //   500000, 10,
-      //   700000, 12,
-      //   1000000, 15
-      // ],
-      // 'line-color': 'black',
-      //'circle-stroke-opacity': 0.4,
-      //'circle-stroke-width': 1
-    },
-    'circle-opacity': 0.4
-  });
 
   $('#exits-button').click(function () {
     $('#entries-button').removeClass('active');
@@ -225,7 +325,7 @@ map.on('style.load', function() {
 
   //$(".outlier-checkbox").checkboxradio({}); not sure why this is not working...
 
-  //NOT WORKING:
+  //NOT WORKING, maybe change this to a button with active/non active state, to match the entries/exits buttons
   $('.outlier-checkbox').bind('change', function(){
     if($(this).is(':checked')){
       map.setFilter('entries-layer', ['all',
@@ -264,18 +364,23 @@ map.on('style.load', function() {
     closeButton: false,
     closeOnClick: false
   });
-  map.on('mousemove', function (e) {
-    // query for the features under the mouse in both layers:
-    var features = map.queryRenderedFeatures(e.point, {
-        layers: ['entries-layer', 'exits-layer'],
-    });
+  // CHECK IF RIGHT: Use this to check the feature ID of the hovered feature
+  var stationID = null;
 
-    // if only one layer is selected by the user, we want to populate the popup with only the data from that layer:
-    if (features.length == 1) {
+  map.on('mousemove', function(e) {
+      //query for the features under the mouse in both layers:
+      var features = map.queryRenderedFeatures(e.point, {
+          layers: ['entries-layer', 'exits-layer'],
+      });
+
+    // Check whether features exist
+    if (features.length > 0) {
+      map.getCanvas().style.cursor = 'pointer'; //change cursor to pointer if hovering over a circle/feature
+
       var hoveredFeature = features[0];
       var station_name = hoveredFeature.properties.stop_name;
-      // if it is the entries layer use that data
-      if (features[0].layer.id === 'entries-layer') {
+
+      if (hoveredFeature.layer.id === 'entries-layer') {
         var num_entries = hoveredFeature.properties.entries;
         var perc_change_entries = hoveredFeature.properties.perc_change_entries
         var popupContent = `
@@ -283,32 +388,45 @@ map.on('style.load', function() {
           <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
           <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries}% change from __</div>
         `;
-        popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(map);
-        // set this lot's polygon feature as the data for the highlight source
-        map.getSource('highlight-feature').setData(hoveredFeature.geometry);
-      } else if (features[0].layer.id === 'exits-layer') {
-        var num_exits = hoveredFeature.properties.exits;
-        var perc_change_exits = hoveredFeature.properties.perc_change_exits
+        //fix the position of the popup as the position of the circle:
+        popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent).addTo(map);
+      } else if (hoveredFeature.layer.id === 'exits-layer') {
+          var num_exits = hoveredFeature.properties.exits;
+          var perc_change_exits = hoveredFeature.properties.perc_change_exits
           var popupContent2 = `
             <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits}% change from __</div>
           `;
-          popup.setLngLat(e.lngLat).setHTML(popupContent2).addTo(map);
-          // set this lot's polygon feature as the data for the highlight source
-          map.getSource('highlight-feature').setData(hoveredFeature.geometry);
+          //fix the position of the popup as the position of the circle:
+          popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent2).addTo(map);
         }
-      map.getCanvas().style.cursor = 'pointer';
 
-    }   else {
-      // remove the Popup
-      popup.remove();
-      map.getCanvas().style.cursor = '';
-      map.getSource('highlight-feature').setData({
-        'type': 'FeatureCollection',
-        'features': []
+      // If stationID for the hovered feature is not null,
+      // use removeFeatureState to reset to the default behavior
+      if (stationID) {
+        map.removeFeatureState({
+          source: 'activity-data',
+          id: stationID
+        });
+      }
+
+      stationID = hoveredFeature.id;
+
+      // When the mouse moves over the earthquakes-viz layer, update the
+      // feature state for the feature under the mouse
+      map.setFeatureState({
+        source: 'activity-data',
+        id: stationID
+      }, {
+        hover: true
       });
-    }
+
+    } else { //if len(features) <1
+        // remove the Popup and change back to default cursor
+        popup.remove();
+        map.getCanvas().style.cursor = '';
+      }
   });
 
 })
