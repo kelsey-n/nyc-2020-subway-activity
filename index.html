@@ -32,15 +32,15 @@
 
       <div id='sidenav-buttons'>
         <button class="sidenav-button" id="context-menu-button" onclick="openNav()" >
-          <span class='original'>Why?</span>
-          <span class='onhover'>Context</span>
+          <span class='original'>Why</span>
+          <span class='onhover'>Why explore this map?</span>
         </button>
         <button class="sidenav-button" id="about-menu-button" onclick="openNav()" >
-          <span class='original'>What?</span>
-          <span class='onhover'>About this map</span>
+          <span class='original'>What</span>
+          <span class='onhover'>What am I looking at?</span>
         </button>
         <button class="sidenav-button" id="usemap-menu-button" onclick="openNav()" >
-          <span class='original'>How?</span>
+          <span class='original'>How</span>
           <span class='onhover'>How to use this map</span>
         </button>
         <button class="sidenav-button" id="legend-menu-button" onclick="openNav()" >
@@ -50,23 +50,26 @@
       </div>
 
       <div id='legend-controls'>
-        <div id='legend-controls-content'>
-        <div>
-          <h3>Showing
-          <button type="button" id='entries-button' class="btn btn-outline-dark btn-sm active" >Entries</button>
-          <button type="button" id='exits-button' class="btn btn-outline-dark btn-sm">Exits</button>
+        <div class='legend-controls-content'>
+          <h3>showing
+            <button type="button" id='entries-button' class="btn btn-outline-dark btn-sm active" >Entries</button>
+            <button type="button" id='exits-button' class="btn btn-outline-dark btn-sm">Exits</button>
           </h3>
-          <h3>in <label id='active-month'>January</label></h3>
+          <h4>for:<label id='active-month'>January</label></h4>
           <div id='slider-month'></div>
-          <div id='slider-perc-range'></div>
-          <div id='lower-range-limit'>-100%</div>
-          <div id='upper-range-limit'>100%</div>
-          <label for="checkbox-1">Show Outliers</label>
-          <input type="checkbox" name="checkbox-1" class="outlier-checkbox">
         </div>
-        <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
+          <div id='range-filter-content'>
+            <h4>filtered for:</h4>
+            <text>% change from <label id='previous-month'>--</label></text>
+            <div id='slider-perc-range'></div>
+            <text id='lower-range-limit'>-100%</text>
+            <text id='upper-range-limit'>100%</text>
+          </div>
+          <div class='legend-controls-content'>
+          <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
+          </div>
       </div>
-      </div>
+
     </div>
 
   </div>

@@ -5,8 +5,7 @@ html, body, #grid-container, #mapcontainer {
 
 #grid-container {
   display: grid;
-  /* grid-template-columns: 25% 75%; */
-  grid-template-rows: 10% 90%;
+  grid-template-rows: 10% 90%; /* divide screen into header and content */
   transition: margin-left .5s;
 }
 
@@ -95,31 +94,45 @@ html, body, #grid-container, #mapcontainer {
   border-radius: 10px;
 }
 
-#legend-controls-content {
-  position: relative;
-  padding: 10px;
+.legend-controls-content {
+  position: relative; /* places content inside the map controls on top of partly transparent background */
+  padding: 15px;
 }
 
-/* #legend-controls-content button {
-  float: right;
-} */
+#active-month{
+  margin-top: 8px;
+  padding-left: 40px;
+}
 
-/*
-#sidebar {
-  grid-column-start: 1;
-  grid-column-end: 2;
-  grid-row-start: 2;
-  grid-row-end: 3;
-  background: #F0F0F0;
-} */
+#slider-month {
+  margin-bottom: 10px;
+}
+
+#upper-range-limit {
+  float: right;
+}
+
+#lower-range-limit {
+  float: left;
+}
+
+#upper-range-limit, #lower-range-limit {
+  font-weight: bold;
+}
+
+#range-filter-content {
+  position: relative;
+  padding: 15px;
+  color: #808080;
+}
+
+#refresh-button {
+  margin-top: 20px;
+}
 
 #mapcontainer {
   flex-grow: 1;
   grid-row-start: 2;
-}
-
-#slider-month, #slider-perc-range {
-  margin: 30px;
 }
 
 .ui-slider:hover {

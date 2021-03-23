@@ -274,14 +274,19 @@ map.on('style.load', function() {
 
         // represent the month in text here using months variable:
         document.getElementById('active-month').innerText = months[window['month']-1];
+        // insert the previous month into the range slider:
+        document.getElementById('previous-month').innerText = months[window['month']-2];
 
         if (window['month'] > 1) {
           $( "#slider-perc-range" ).slider("enable");
           $( "#slider-perc-range" ).slider( "values", 0, -100 );
-          $( "#slider-perc-range" ).slider( "values", 1, 100 )
+          $( "#slider-perc-range" ).slider( "values", 1, 100 );
+          $('#range-filter-content').css('color', 'black');
         }
         else if (window['month'] === 1) {
           $( "#slider-perc-range" ).slider("disable");
+          document.getElementById('previous-month').innerText = '--';
+          $('#range-filter-content').css('color', '#808080');
         }
 
       }
@@ -353,8 +358,10 @@ map.on('style.load', function() {
       $( "#slider-month" ).slider("value", 1);
       $( "#slider-perc-range" ).slider("disable");
       document.getElementById('active-month').innerText = 'January';
+      document.getElementById('previous-month').innerText = '--';
       map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]);
       map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], 1]);
+      $('#range-filter-content').css('color', '#808080');
     }
     else if ($('#refresh-button').text() === 'Reset Range Filter') {
       $( "#slider-perc-range" ).slider( "values", 0, -100 );
