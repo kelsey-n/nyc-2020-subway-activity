@@ -46,6 +46,31 @@ map.on('style.load', function() {
   openNav(); //load welcome message on load
 
   // add the geojson source
+
+  // add geojson source for subway routes
+  map.addSource('nyc-subway-routes', {
+    type: 'geojson',
+    data: 'data/nycsubwayroutes.geojson'
+  });
+
+  // TESTING: diff color for subway routes
+  // map.addLayer({
+  //   'id': 'subway-routes-layer',
+  //   'type': 'line',
+  //   'source': 'nyc-subway-routes',
+  //   'layout': {
+  //     'visibility': 'visible'
+  //   },
+  //   'paint': {
+  //     'line-color': 'white'
+  //   }
+  // })
+
+  // add layers by iterating over the styles in the array defined in subway-layer-styles.js
+  subwayLayerStyles.forEach((style) => {
+    map.addLayer(style)
+  })
+
   map.addSource('activity-data', {
     type: 'geojson',
     data: 'data/subwayactivitydata.geojson',
@@ -83,7 +108,7 @@ map.on('style.load', function() {
         'yellow', '#FCCC0A',
         'white' //'multiple' line_colors
       ],
-      'circle-opacity': 0.7
+      'circle-opacity': 0.75
     },
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
@@ -120,7 +145,7 @@ map.on('style.load', function() {
         'yellow', '#FCCC0A',
         'white' //'multiple' line_colors
       ],
-      'circle-opacity': 0.7
+      'circle-opacity': 0.75
     },
     'filter': ['==', ['number', ['get', 'month']], 1]
   })
@@ -259,6 +284,8 @@ map.on('style.load', function() {
   })
 
 
+  window['month'] = 1;
+
   $(function() {
     $( "#slider-month" ).slider({
       'min': 1,
@@ -391,15 +418,25 @@ map.on('style.load', function() {
 
       var hoveredFeature = features[0];
       var station_name = hoveredFeature.properties.stop_name;
+      var station_lines = hoveredFeature.properties.daytime_routes;
 
       if (hoveredFeature.layer.id === 'entries-layer') {
         var num_entries = hoveredFeature.properties.entries;
         var perc_change_entries = hoveredFeature.properties.perc_change_entries
-        var popupContent = `
-          <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
-          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries}% change from __</div>
-        `;
+        if (window['month'] == 1) {
+          var popupContent = `
+            <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+            <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
+          `;
+        } else {
+          var popupContent = `
+            <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+            <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries}% change from ${months[window['month']-2]}</div>
+          `;
+        };
 
         //fix the position of the popup as the position of the circle:
         popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent).addTo(map);
@@ -418,11 +455,20 @@ map.on('style.load', function() {
       } else if (hoveredFeature.layer.id === 'exits-layer') {
           var num_exits = hoveredFeature.properties.exits;
           var perc_change_exits = hoveredFeature.properties.perc_change_exits
-          var popupContent2 = `
-            <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits}% change from __</div>
-          `;
+          if (window['month'] == 1) {
+            var popupContent2 = `
+              <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+              <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
+            `;
+          } else {
+            var popupContent2 = `
+              <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+              <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
+              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits}% change from ${months[window['month']-2]}</div>
+            `;
+          }
 
           //fix the position of the popup as the position of the circle:
           popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent2).addTo(map);
