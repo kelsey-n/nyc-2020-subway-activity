@@ -427,13 +427,13 @@ map.on('style.load', function() {
           var popupContent = `
             <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
             <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
           `;
         } else {
           var popupContent = `
             <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
             <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_entries} entries</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries}% change from ${months[window['month']-2]}</div>
           `;
         };
@@ -459,7 +459,7 @@ map.on('style.load', function() {
             var popupContent2 = `
               <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
               <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
+              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
             `;
           } else {
             var popupContent2 = `
