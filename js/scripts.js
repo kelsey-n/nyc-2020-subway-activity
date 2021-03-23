@@ -6,6 +6,8 @@ function openNav() {
   /* Set the width of the side navigation to be viewable at 250px, and set the left margin of the page content to 250px to shift page content over*/
   document.getElementById("sidenav-menu").style.width = "250px";
   document.getElementById("grid-container").style.marginLeft = "250px";
+  document.getElementById("legend-controls").style.left = "400px";
+  document.getElementById("sidenav-buttons").style.left = "250px";
   $('.sidenav-button').click(function() {
     var button_id = $(this).attr('id') //pull out the id name of the clicked sidenav button
     var menu_text = $(`#${button_id}-text`).text(); //get the menu text for the clicked button
@@ -17,6 +19,8 @@ function openNav() {
 function closeNav() {
   document.getElementById("sidenav-menu").style.width = "0";
   document.getElementById("grid-container").style.marginLeft = "0";
+  document.getElementById("legend-controls").style.left = "150px";
+  document.getElementById("sidenav-buttons").style.left = "0px";
 }
 
 // Initialize mapboxgl map and insert into mapcontainer div:
@@ -34,7 +38,7 @@ map.addControl(new mapboxgl.NavigationControl({
 }));
 
 // Create array to convert 'month' number in data to month word:
-var months = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec']
+var months = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
 map.on('style.load', function() {
 
@@ -316,6 +320,8 @@ map.on('style.load', function() {
                                       ]);
         //temporary text box to see vals of range slider: delete later
         $( "#price" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        $('#lower-range-limit').text(ui.values[0]+'%')
+        $('#upper-range-limit').text(ui.values[1]+'%')
 
         //if range slider is used, set text in refresh button to 'Reset range filter':
         $('#refresh-button').text('Reset Range Filter')
@@ -346,7 +352,7 @@ map.on('style.load', function() {
     if ($('#refresh-button').text() === 'Refresh Timeline') {
       $( "#slider-month" ).slider("value", 1);
       $( "#slider-perc-range" ).slider("disable");
-      document.getElementById('active-month').innerText = 'Jan';
+      document.getElementById('active-month').innerText = 'January';
       map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]);
       map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], 1]);
     }
@@ -355,6 +361,8 @@ map.on('style.load', function() {
       $( "#slider-perc-range" ).slider( "values", 1, 100 );
       map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
       map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
+      $('#lower-range-limit').text('-100%')
+      $('#upper-range-limit').text('100%')
       $('#refresh-button').text('Refresh Timeline')
     }
   })

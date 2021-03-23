@@ -1,30 +1,38 @@
-html, body, #grid-container, #sidebar, #mapcontainer {
+html, body, #grid-container, #mapcontainer {
   height: 100%;
   margin: 0;
 }
 
 #grid-container {
   display: grid;
-  grid-template-columns: 25% 75%;
+  /* grid-template-columns: 25% 75%; */
   grid-template-rows: 10% 90%;
   transition: margin-left .5s;
 }
 
+#sidenav-buttons {
+  position: fixed;
+  top: 10%;
+  left: 250px;
+  z-index: 1;
+  transition: left .5s;
+}
+
 /* The navigation menu links */
-.sidenav-buttons button {
+#sidenav-buttons button {
   display: block;
 }
 
 /* Hover control for buttons */
-.sidenav-buttons button .onhover {
+#sidenav-buttons button .onhover {
   display: none;
 }
 
-.sidenav-buttons button:hover .original {
+#sidenav-buttons button:hover .original {
   display: none;
 }
 
-.sidenav-buttons button:hover .onhover {
+#sidenav-buttons button:hover .onhover {
   display: inline;
 }
 
@@ -34,7 +42,7 @@ html, body, #grid-container, #sidebar, #mapcontainer {
   width: 0; /* 0 width - change this with jquery */
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
-  top: 10%; /* Stay at the top */
+  top: 10%; /* Position 10% from top of screen to account for header */
   left: 0;
   background-color: #111; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
@@ -68,36 +76,46 @@ html, body, #grid-container, #sidebar, #mapcontainer {
 }
 
 #legend-controls {
-  top: 60px;
+  top: 10%;
   left: 400px;
   position: fixed;
   z-index: 1; /* places controls on top of map container */
+  transition: left .5s;
 }
 
 #legend-controls::before {
   content: "";
   background-color: white;
-  opacity: 0.7;
+  opacity: 0.8;
   position: absolute;
   top: 0px;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  border-radius: 30px;
+  border-radius: 10px;
 }
 
+#legend-controls-content {
+  position: relative;
+  padding: 10px;
+}
+
+/* #legend-controls-content button {
+  float: right;
+} */
+
+/*
 #sidebar {
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 2;
   grid-row-end: 3;
   background: #F0F0F0;
-}
+} */
 
 #mapcontainer {
   flex-grow: 1;
   grid-row-start: 2;
-  grid-row-end: 3;
 }
 
 #slider-month, #slider-perc-range {

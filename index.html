@@ -9,7 +9,7 @@
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel = "stylesheet">
+  <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-darkness/jquery-ui.css" rel = "stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -28,9 +28,9 @@
 
   <div id='grid-container'>
 
-    <div id='sidebar'>
+    <div id='mapcontainer'>
 
-      <div class='sidenav-buttons'>
+      <div id='sidenav-buttons'>
         <button class="sidenav-button" id="context-menu-button" onclick="openNav()" >
           <span class='original'>Why?</span>
           <span class='onhover'>Context</span>
@@ -49,28 +49,24 @@
         </button>
       </div>
 
-
-      <button type="button" id='entries-button' class="btn btn-outline-dark btn-sm active" >Entries</button>
-      <button type="button" id='exits-button' class="btn btn-outline-dark btn-sm">Exits</button>
-      <div>
-        <h2>Month: <label id='active-month'>Jan</label></h2>
-        <div id='slider-month'></div>
-        <div id='slider-perc-range'></div>
-        <label for="checkbox-1">Show Outliers</label>
-        <input type="checkbox" name="checkbox-1" class="outlier-checkbox">
-        <p>
-         <label for = "price">Perc change range:</label>
-         <input type = "text" id = "price"
-            style = "border:0; color:#b9cd6d; font-weight:bold;">
-        </p>
+      <div id='legend-controls'>
+        <div id='legend-controls-content'>
+        <div>
+          <h3>Showing
+          <button type="button" id='entries-button' class="btn btn-outline-dark btn-sm active" >Entries</button>
+          <button type="button" id='exits-button' class="btn btn-outline-dark btn-sm">Exits</button>
+          </h3>
+          <h3>in <label id='active-month'>January</label></h3>
+          <div id='slider-month'></div>
+          <div id='slider-perc-range'></div>
+          <div id='lower-range-limit'>-100%</div>
+          <div id='upper-range-limit'>100%</div>
+          <label for="checkbox-1">Show Outliers</label>
+          <input type="checkbox" name="checkbox-1" class="outlier-checkbox">
+        </div>
+        <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
       </div>
-      <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
-    </div>
-
-    <div id='legend-controls'>
-      <p>Legend Controls</p>
-    </div>
-    <div id='mapcontainer'>
+      </div>
     </div>
 
   </div>
