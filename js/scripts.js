@@ -1,4 +1,11 @@
+// Set mapbox gl access token:
 mapboxgl.accessToken = 'pk.eyJ1Ijoia25hbmFuIiwiYSI6ImNrbDlsMXNmNjI3MnEyb25yYjNremFwYXQifQ.l6loLOR-pOL_U2kzWBSQNQ';
+
+// Load google charts
+google.charts.load('current', {'packages':['corechart'], callback: drawChart });
+//google.charts.setOnLoadCallback(drawChart);
+
+
 
 // This function will open the side navigation menu when user clicks on any of the floating menu buttons
 // and populate the menu with text relevant to the button that was clicked
@@ -13,7 +20,8 @@ function openNav() {
     var menu_text = $(`#${button_id}-text`).text(); //get the menu text for the clicked button
     $(".sidenav-menu-text").text(menu_text); //populate the sidenav menu with the appropriate text
     // TO DO: style the clicked button here:
-  })
+  });
+  document.getElementById("line-chart").style.width = "0";
 }
 
 // Set the width of the side navigation to 0 and the left margin of the page content to 0
@@ -41,11 +49,47 @@ map.addControl(new mapboxgl.NavigationControl({
 // Create array to convert 'month' number in data to month word:
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
+// Create an array with the average number of entries per month to use for plotting the line chart:
+var avg_entries = [
+  ['Month', 'Avg (all stations)'],
+  ['Jan', 324129],
+  ['Feb', 303832],
+  ['Mar', 172456],
+  ['Apr', 28642],
+  ['May', 36865],
+  ['Jun', 56228],
+  ['Jul', 74855],
+  ['Aug', 79574],
+  ['Sep', 95799],
+  ['Oct', 106166],
+  ['Nov', 95193],
+  ['Dec', 77912]
+]
+
+
+// Draw the chart
+function drawChart() {
+  var data = google.visualization.arrayToDataTable(avg_entries);
+
+  // Optional; add a title and set the width and height of the chart
+  var options = {'title': 'Entries', 'width':550, 'height':'35%',
+            'series': {
+              0: {color: 'black'},
+              1: {color: 'black', lineDashStyle: [2, 2]}
+            }
+          };
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.LineChart(document.getElementById('line-chart'));
+  chart.draw(data, options);
+}
+
+
+
+
 map.on('style.load', function() {
 
   openNav(); //load welcome message on load
-
-  // add the geojson source
 
   // add geojson source for subway routes
   map.addSource('nyc-subway-routes', {
@@ -74,6 +118,7 @@ map.on('style.load', function() {
   map.addSource('activity-data', {
     type: 'geojson',
     data: 'data/subwayactivitydata.geojson',
+    generateId: true
   });
 
   map.addLayer({
@@ -268,6 +313,16 @@ map.on('style.load', function() {
     'circle-opacity': 1
   });
 
+  // TESTING: add an empty invisible source to filter the activity data for complex_id of the clicked station (to get data for chart)
+  map.addLayer({
+    'id': 'invisible-layer-for-querying',
+    'type': 'circle',
+    'source': 'activity-data',
+    'layout': {
+      'visibility': 'none'
+    },
+  });
+
 
   $('#exits-button').click(function () {
     $('#entries-button').removeClass('active');
@@ -385,6 +440,7 @@ map.on('style.load', function() {
       $( "#slider-perc-range" ).slider("disable");
       document.getElementById('active-month').innerText = 'January';
       document.getElementById('previous-month').innerText = '--';
+      window['month'] = 1; //to reset popup content
       map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]);
       map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], 1]);
       $('#range-filter-content').css('color', '#808080');
@@ -419,7 +475,9 @@ map.on('style.load', function() {
       var hoveredFeature = features[0];
       var station_name = hoveredFeature.properties.stop_name;
       var station_lines = hoveredFeature.properties.daytime_routes;
+      var id = hoveredFeature.id;
 
+      // If we are in the entries layer:
       if (hoveredFeature.layer.id === 'entries-layer') {
         var num_entries = hoveredFeature.properties.entries;
         var perc_change_entries = hoveredFeature.properties.perc_change_entries
@@ -452,6 +510,27 @@ map.on('style.load', function() {
         // set this circle's geometry and properties as the data for the highlight source
         map.getSource('highlight-feature-entries').setData(hoveredFeature_data);
 
+        //If the circle is clicked on, show the trendline:
+        // TO DO: fix this logic: on click of hoveredFeature
+        map.on('click', 'entries-layer', function() {
+          // Set the width of the trendline to be viewable at 250px, and set the left margin of the page content to 250px to shift page content over
+          closeNav();
+          // PUT FUNCTION DRAWCHART HERE, include the data attributes of hoveredFeature's complex_id
+          // querysourcefeatures, with a filter for complex_id, to get the vals for hoveredFeature's complex_id
+          // add a map layer with all features, visibility=none
+          // set filter on this layer to be hoveredFeature's complex_id
+          // somehow get value for each month from this layer...
+
+          // var testfeatures = map.querySourceFeatures('activity-data', {
+          //   filter: ['==', ['number', ['get', 'complex_id']], hoveredFeature.properties.complex_id]
+          // });
+          console.log(hoveredFeature.properties.complex_id)
+
+          // Show the line chart:
+          //document.getElementById("line-chart").style.width = "550px";
+
+        });
+
       } else if (hoveredFeature.layer.id === 'exits-layer') {
           var num_exits = hoveredFeature.properties.exits;
           var perc_change_exits = hoveredFeature.properties.perc_change_exits
@@ -465,7 +544,7 @@ map.on('style.load', function() {
             var popupContent2 = `
               <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
               <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${num_exits} exits</div>
+              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
               <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits}% change from ${months[window['month']-2]}</div>
             `;
           }

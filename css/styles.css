@@ -3,15 +3,32 @@ html, body, #grid-container, #mapcontainer {
   margin: 0;
 }
 
+body {
+  background-color: #F5F5F5;
+}
+
 #grid-container {
   display: grid;
-  grid-template-rows: 10% 90%; /* divide screen into header and content */
+  grid-template-rows: 9% 91%; /* divide screen into header and content */
   transition: margin-left .5s;
+}
+
+#mapcontainer {
+  flex-grow: 1;
+  grid-row-start: 2;
+  transition: margin-left .5s;
+}
+
+#header {
+  text-align: center;
+  position: fixed;
+  margin-left: 10px;
+  color: #585858;
 }
 
 #sidenav-buttons {
   position: fixed;
-  top: 10%;
+  top: 9%;
   left: 250px;
   z-index: 1;
   transition: left .5s;
@@ -41,7 +58,7 @@ html, body, #grid-container, #mapcontainer {
   width: 0; /* 0 width - change this with jquery */
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
-  top: 10%; /* Position 10% from top of screen to account for header */
+  top: 9%; /* Position 9% from top of screen to account for header */
   left: 0;
   background-color: #111; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
@@ -130,11 +147,6 @@ html, body, #grid-container, #mapcontainer {
   margin-top: 20px;
 }
 
-#mapcontainer {
-  flex-grow: 1;
-  grid-row-start: 2;
-}
-
 .ui-slider:hover {
   cursor: pointer;
 }
@@ -145,4 +157,18 @@ html, body, #grid-container, #mapcontainer {
 
 .ui-slider-handle {
   outline: none;
+}
+
+/* The trendline - originally hidden*/
+#line-chart {
+  height: 35%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with jquery */
+  position: fixed; /* Stay in place */
+  z-index: 2; /* Stay on top */
+  bottom: 0%; /* Position at the bottom of the page */
+  left: 0;
+  /* background-color: #111; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  /*padding-top: 0px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the chart */
 }

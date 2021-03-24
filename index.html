@@ -16,6 +16,10 @@
 
 <body>
 
+  <h1 id='header'>
+    NYC 2020 Subway Ridership
+  </h1>
+
   <div id='sidenav-menu'>
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <p class='sidenav-menu-text'>WELCOME text here. ID=sidenav-menu</p>
@@ -25,6 +29,8 @@
   <p id='context-menu-button-text' style="display:none;">Sidenav menu text here. ID=CONTEXT menu</p>
   <p id='usemap-menu-button-text' style="display:none;">Sidenav menu text here. ID=USAGE menu</p>
   <p id='legend-menu-button-text' style="display:none;">Sidenav menu text here. ID=LEGEND menu</p>
+
+  <div id="line-chart"></div>
 
   <div id='grid-container'>
 
@@ -88,6 +94,7 @@
   <!-- <script src = "https://code.jquery.com/jquery-1.10.2.js"></script> -->
   <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="js/subway-layer-styles.js"></script>
   <script src="js/scripts.js"></script>
 
