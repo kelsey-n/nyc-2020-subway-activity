@@ -2,8 +2,7 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoia25hbmFuIiwiYSI6ImNrbDlsMXNmNjI3MnEyb25yYjNremFwYXQifQ.l6loLOR-pOL_U2kzWBSQNQ';
 
 // Load google charts
-google.charts.load('current', {'packages':['corechart'], callback: drawChart });
-//google.charts.setOnLoadCallback(drawChart);
+google.charts.load('current', {'packages':['corechart']});
 
 
 
@@ -21,7 +20,7 @@ function openNav() {
     $(".sidenav-menu-text").text(menu_text); //populate the sidenav menu with the appropriate text
     // TO DO: style the clicked button here:
   });
-  document.getElementById("line-chart").style.width = "0";
+  document.getElementById("line-chart").style.width = "0"; //having both sidenav and linechart open at same time would be too cluttered
 }
 
 // Set the width of the side navigation to 0 and the left margin of the page content to 0
@@ -48,44 +47,6 @@ map.addControl(new mapboxgl.NavigationControl({
 
 // Create array to convert 'month' number in data to month word:
 var months = ['January','February','March','April','May','June','July','August','September','October','November','December']
-
-// Create an array with the average number of entries per month to use for plotting the line chart:
-var avg_entries = [
-  ['Month', 'Avg (all stations)'],
-  ['Jan', 324129],
-  ['Feb', 303832],
-  ['Mar', 172456],
-  ['Apr', 28642],
-  ['May', 36865],
-  ['Jun', 56228],
-  ['Jul', 74855],
-  ['Aug', 79574],
-  ['Sep', 95799],
-  ['Oct', 106166],
-  ['Nov', 95193],
-  ['Dec', 77912]
-]
-
-
-// Draw the chart
-function drawChart() {
-  var data = google.visualization.arrayToDataTable(avg_entries);
-
-  // Optional; add a title and set the width and height of the chart
-  var options = {'title': 'Entries', 'width':550, 'height':'35%',
-            'series': {
-              0: {color: 'black'},
-              1: {color: 'black', lineDashStyle: [2, 2]}
-            }
-          };
-
-  // Display the chart inside the <div> element with id="piechart"
-  var chart = new google.visualization.LineChart(document.getElementById('line-chart'));
-  chart.draw(data, options);
-}
-
-
-
 
 map.on('style.load', function() {
 
@@ -117,8 +78,7 @@ map.on('style.load', function() {
 
   map.addSource('activity-data', {
     type: 'geojson',
-    data: 'data/subwayactivitydata.geojson',
-    generateId: true
+    data: 'data/subwayactivitydata.geojson'
   });
 
   map.addLayer({
@@ -510,27 +470,6 @@ map.on('style.load', function() {
         // set this circle's geometry and properties as the data for the highlight source
         map.getSource('highlight-feature-entries').setData(hoveredFeature_data);
 
-        //If the circle is clicked on, show the trendline:
-        // TO DO: fix this logic: on click of hoveredFeature
-        map.on('click', 'entries-layer', function() {
-          // Set the width of the trendline to be viewable at 250px, and set the left margin of the page content to 250px to shift page content over
-          closeNav();
-          // PUT FUNCTION DRAWCHART HERE, include the data attributes of hoveredFeature's complex_id
-          // querysourcefeatures, with a filter for complex_id, to get the vals for hoveredFeature's complex_id
-          // add a map layer with all features, visibility=none
-          // set filter on this layer to be hoveredFeature's complex_id
-          // somehow get value for each month from this layer...
-
-          // var testfeatures = map.querySourceFeatures('activity-data', {
-          //   filter: ['==', ['number', ['get', 'complex_id']], hoveredFeature.properties.complex_id]
-          // });
-          console.log(hoveredFeature.properties.complex_id)
-
-          // Show the line chart:
-          //document.getElementById("line-chart").style.width = "550px";
-
-        });
-
       } else if (hoveredFeature.layer.id === 'exits-layer') {
           var num_exits = hoveredFeature.properties.exits;
           var perc_change_exits = hoveredFeature.properties.perc_change_exits
@@ -578,6 +517,69 @@ map.on('style.load', function() {
           'features': []
         });
       }
+  });
+
+  //If the circle is clicked on, show the trendline:
+  // TO DO: fix this logic: on click of hoveredFeature
+  map.on('click', 'entries-layer', function(e) {
+    closeNav(); //having both sidenav and linechart open at the same time would be too cluttered
+
+    // get the clicked station's complex_id by querying the rendered features
+    var features = map.queryRenderedFeatures(e.point, {
+        layers: ['entries-layer'],
+    });
+    var clickedFeature = features[0]
+    // then get all clicked station's data by querying the source features for all months' data for that complex_id
+    var clickedFeature_queryResults = map.querySourceFeatures('activity-data', {
+      filter: ['==', ['number', ['get', 'complex_id']], clickedFeature.properties.complex_id]
+    });
+    // querysourcefeatures sometimes returns dupes because of tile set characteristics, so take the first 12 to get each month only once:
+    var clickedFeature_data = clickedFeature_queryResults.slice(0,12)
+
+    // subwayactivitydata.geojson is sorted by complex_id asc then month ascending
+    // checked: every complex id has 12 months (12 entries in the data) and every month has 426 complex ids, so data valid for this graphing
+    // querysourcefeatures seems to always return the features in the order that they appear in the data source
+    // so we can assume that the first feature in clickedFeature_data is for month 1, etc.
+
+    // Create an array with the average number of entries per month for all stations and clicked station's entries per month:
+    var avg_entries = [
+      ['Month', 'Avg (all stations)', 'Total (this station)'],
+      ['Jan', 324129, clickedFeature_data[0].properties.entries],
+      ['Feb', 303832, clickedFeature_data[1].properties.entries],
+      ['Mar', 172456, clickedFeature_data[2].properties.entries],
+      ['Apr', 28642, clickedFeature_data[3].properties.entries],
+      ['May', 36865, clickedFeature_data[4].properties.entries],
+      ['Jun', 56228, clickedFeature_data[5].properties.entries],
+      ['Jul', 74855, clickedFeature_data[6].properties.entries],
+      ['Aug', 79574, clickedFeature_data[7].properties.entries],
+      ['Sep', 95799, clickedFeature_data[8].properties.entries],
+      ['Oct', 106166, clickedFeature_data[9].properties.entries],
+      ['Nov', 95193, clickedFeature_data[10].properties.entries],
+      ['Dec', 77912, clickedFeature_data[11].properties.entries]
+    ]
+
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Draw the chart
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable(avg_entries);
+
+      // Optional; add a title and set the width and height of the chart
+      var options = {'title': 'Entries', 'width':600, 'height':'35%',
+                'series': {
+                  0: {color: 'black'},
+                  1: {color: 'black', lineDashStyle: [2, 2]}
+                }
+              };
+
+      // Display the chart inside the div element with id='line-chart'
+      var chart = new google.visualization.LineChart(document.getElementById('line-chart'));
+      chart.draw(data, options);
+    }
+
+    // Draw and show the line chart here:
+    document.getElementById("line-chart").style.width = "600px";
+
   });
 
 })

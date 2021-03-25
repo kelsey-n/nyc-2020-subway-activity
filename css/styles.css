@@ -13,6 +13,8 @@ body {
   transition: margin-left .5s;
 }
 
+/* Try grid-container::before to put opaque cover on grid-container on load, then remove on click 'Explore' button */
+
 #mapcontainer {
   flex-grow: 1;
   grid-row-start: 2;
