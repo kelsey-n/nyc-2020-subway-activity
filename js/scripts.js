@@ -34,6 +34,10 @@ function closeNav() {
 function closeChart() {
   document.getElementById("line-chart-div").style.width = "0";
   popup_click.remove();
+  map.getSource('highlight-clickedfeature-entries').setData({
+    'type': 'FeatureCollection',
+    'features': []
+  });
 }
 
 // Initialize mapboxgl map and insert into mapcontainer div:
@@ -62,19 +66,6 @@ map.on('style.load', function() {
     type: 'geojson',
     data: 'data/nycsubwayroutes.geojson'
   });
-
-  // TESTING: diff color for subway routes
-  // map.addLayer({
-  //   'id': 'subway-routes-layer',
-  //   'type': 'line',
-  //   'source': 'nyc-subway-routes',
-  //   'layout': {
-  //     'visibility': 'visible'
-  //   },
-  //   'paint': {
-  //     'line-color': 'white'
-  //   }
-  // })
 
   // add layers by iterating over the styles in the array defined in subway-layer-styles.js
   subwayLayerStyles.forEach((style) => {
@@ -278,14 +269,49 @@ map.on('style.load', function() {
     'circle-opacity': 1
   });
 
-  // TESTING: add an empty invisible source to filter the activity data for complex_id of the clicked station (to get data for chart)
+  // add an empty data source, which we will use to highlight the station that the user has clicked on in the entries layer
+  map.addSource('highlight-clickedfeature-entries', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  });
+
+  // add a layer for the highlighted station in the entries layer
   map.addLayer({
-    'id': 'invisible-layer-for-querying',
-    'type': 'circle',
-    'source': 'activity-data',
-    'layout': {
-      'visibility': 'none'
+    id: 'highlight-clickedstation-entries',
+    type: 'circle',
+    source: 'highlight-clickedfeature-entries',
+    paint: {
+      'circle-radius': [
+          'interpolate', ['linear'],
+          ['get', 'entries'],
+          1000, 2,
+          100000, 7,
+          500000, 10,
+          700000, 12,
+          1000000, 15,
+        ],
+      'circle-stroke-color': 'black',
+      'circle-color': [
+        'match',
+        ['get', 'line_color'],
+        'blue', '#0039A6',
+        'brown', '#996633',
+        'gray', '#A7A9AC',
+        'green', '#00933C',
+        'lightgreen', '#6CBE45',
+        'orange', '#FF6319',
+        'purple', '#B933AD',
+        'red', '#EE352E',
+        'shuttlegray', '#808183',
+        'yellow', '#FCCC0A',
+        'white' //'multiple' line_colors
+      ],
+      'circle-stroke-width': 2, //stroke color and stroke width give the effect of the circle becoming slightly larger upon hovering
     },
+    'circle-opacity': 1
   });
 
 
@@ -403,6 +429,7 @@ map.on('style.load', function() {
   });
 
   $('#refresh-button').click(function () {
+    closeChart();
     if ($('#refresh-button').text() === 'Refresh Timeline') {
       $( "#slider-month" ).slider("value", 1);
       $( "#slider-perc-range" ).slider("disable");
@@ -616,6 +643,19 @@ map.on('style.load', function() {
 
     // Show the line chart here:
     document.getElementById("line-chart-div").style.width = "600px";
+
+    //create and populate a feature with the properties of the hoveredFeature
+    var clickedFeature_highlightData = {
+      'type': 'Feature',
+      'geometry': clickedFeature.geometry,
+      'properties': {
+        'entries': clickedFeature.properties.entries,
+        'line_color': clickedFeature.properties.line_color
+      },
+    };
+    console.log(clickedFeature_highlightData)
+    // set this circle's geometry and properties as the data for the highlight source
+    map.getSource('highlight-clickedfeature-entries').setData(clickedFeature_highlightData);
 
     popup_click.setLngLat(clickedFeature.geometry.coordinates).setHTML(window['popupContent']).addTo(map)
 
