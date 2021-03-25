@@ -38,6 +38,10 @@ function closeChart() {
     'type': 'FeatureCollection',
     'features': []
   });
+  map.getSource('highlight-clickedfeature-exits').setData({
+    'type': 'FeatureCollection',
+    'features': []
+  });
 }
 
 // Initialize mapboxgl map and insert into mapcontainer div:
@@ -287,6 +291,51 @@ map.on('style.load', function() {
       'circle-radius': [
           'interpolate', ['linear'],
           ['get', 'entries'],
+          1000, 2,
+          100000, 7,
+          500000, 10,
+          700000, 12,
+          1000000, 15,
+        ],
+      'circle-stroke-color': 'black',
+      'circle-color': [
+        'match',
+        ['get', 'line_color'],
+        'blue', '#0039A6',
+        'brown', '#996633',
+        'gray', '#A7A9AC',
+        'green', '#00933C',
+        'lightgreen', '#6CBE45',
+        'orange', '#FF6319',
+        'purple', '#B933AD',
+        'red', '#EE352E',
+        'shuttlegray', '#808183',
+        'yellow', '#FCCC0A',
+        'white' //'multiple' line_colors
+      ],
+      'circle-stroke-width': 2, //stroke color and stroke width give the effect of the circle becoming slightly larger upon hovering
+    },
+    'circle-opacity': 1
+  });
+
+  // add an empty data source, which we will use to highlight the station that the user has clicked on in the exits layer
+  map.addSource('highlight-clickedfeature-exits', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  });
+
+  // add a layer for the highlighted station in the exits layer
+  map.addLayer({
+    id: 'highlight-clickedstation-exits',
+    type: 'circle',
+    source: 'highlight-clickedfeature-exits',
+    paint: {
+      'circle-radius': [
+          'interpolate', ['linear'],
+          ['get', 'exits'],
           1000, 2,
           100000, 7,
           500000, 10,
@@ -661,6 +710,106 @@ map.on('style.load', function() {
 
   });
 
+  map.on('click', 'exits-layer', function(e) {
+    closeNav(); //having both sidenav and linechart open at the same time would be too cluttered
 
+    // get the clicked station's complex_id by querying the rendered features
+    var features = map.queryRenderedFeatures(e.point, {
+        layers: ['exits-layer'],
+    });
+    var clickedFeature = features[0]
+    var clickedStation = clickedFeature.properties.stop_name
+    // then get all clicked station's data by querying the source features for all months' data for that complex_id
+    var clickedFeature_queryResults = map.querySourceFeatures('activity-data', {
+      filter: ['==', ['number', ['get', 'complex_id']], clickedFeature.properties.complex_id]
+    });
+    // querysourcefeatures sometimes returns dupes because of tile set characteristics, so take the first 12 to get each month only once:
+    var clickedFeature_data = clickedFeature_queryResults.slice(0,12)
+
+    // subwayactivitydata.geojson is sorted by complex_id asc then month ascending
+    // checked: every complex id has 12 months (12 entries in the data) and every month has 426 complex ids, so data valid for this graphing
+    // querysourcefeatures seems to always return the features in the order that they appear in the data source
+    // so we can assume that the first feature in clickedFeature_data is for month 1, etc.
+
+    // Create an array with the average number of entries per month for all stations and clicked station's entries per month:
+    var avg_exits = [
+      ['Month', 'All', 'This'],
+      ['Jan', 324129, clickedFeature_data[0].properties.exits],
+      ['Feb', 303832, clickedFeature_data[1].properties.exits],
+      ['Mar', 172456, clickedFeature_data[2].properties.exits],
+      ['Apr', 28642, clickedFeature_data[3].properties.exits],
+      ['May', 36865, clickedFeature_data[4].properties.exits],
+      ['Jun', 56228, clickedFeature_data[5].properties.exits],
+      ['Jul', 74855, clickedFeature_data[6].properties.exits],
+      ['Aug', 79574, clickedFeature_data[7].properties.exits],
+      ['Sep', 95799, clickedFeature_data[8].properties.exits],
+      ['Oct', 106166, clickedFeature_data[9].properties.exits],
+      ['Nov', 95193, clickedFeature_data[10].properties.exits],
+      ['Dec', 77912, clickedFeature_data[11].properties.exits]
+    ]
+
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Draw the chart
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable(avg_exits);
+
+      // Optional; add a title and set the width and height of the chart
+      var options = {
+        'title': `Average Exits (All Stations), Total Exits (${clickedStation})`,
+        'titleTextStyle': {
+            'color': 'white'
+        },
+        'width':600,
+        'height':'35%',
+        'backgroundColor': '#585858', //'#F5F5F5', //'transparent',
+        'vAxis': {
+          'gridlines': {
+                'color': 'black'
+          },
+          'textStyle': {
+            'color': 'white'
+          }
+        },
+        'hAxis': {
+          'textStyle': {
+            'color': 'white'
+          }
+        },
+        'series': {
+          0: {color: 'white', lineWidth: 4},
+          1: {color: 'white', lineDashStyle: [10, 2]}
+        },
+        'legend': {
+          'textStyle': {
+            'color': 'white'
+          }
+        }
+      };
+
+      // Display the chart inside the div element with id='line-chart'
+      var chart = new google.visualization.LineChart(document.getElementById('line-chart'));
+      chart.draw(data, options);
+    }
+
+    // Show the line chart here:
+    document.getElementById("line-chart-div").style.width = "600px";
+
+    //create and populate a feature with the properties of the hoveredFeature
+    var clickedFeature_highlightData = {
+      'type': 'Feature',
+      'geometry': clickedFeature.geometry,
+      'properties': {
+        'exits': clickedFeature.properties.exits,
+        'line_color': clickedFeature.properties.line_color
+      },
+    };
+    console.log(clickedFeature_highlightData)
+    // set this circle's geometry and properties as the data for the highlight source
+    map.getSource('highlight-clickedfeature-exits').setData(clickedFeature_highlightData);
+
+    popup_click.setLngLat(clickedFeature.geometry.coordinates).setHTML(window['popupContent2']).addTo(map)
+
+  });
 
 })
