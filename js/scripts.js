@@ -20,7 +20,7 @@ function openNav() {
     $(".sidenav-menu-text").text(menu_text); //populate the sidenav menu with the appropriate text
     // TO DO: style the clicked button here:
   });
-  document.getElementById("line-chart").style.width = "0"; //having both sidenav and linechart open at same time would be too cluttered
+  document.getElementById("line-chart-div").style.width = "0"; //having both sidenav and linechart open at same time would be too cluttered
 }
 
 // Set the width of the side navigation to 0 and the left margin of the page content to 0
@@ -29,6 +29,11 @@ function closeNav() {
   document.getElementById("grid-container").style.marginLeft = "0";
   document.getElementById("legend-controls").style.left = "150px";
   document.getElementById("sidenav-buttons").style.left = "0px";
+}
+
+function closeChart() {
+  document.getElementById("line-chart-div").style.width = "0";
+  popup_click.remove();
 }
 
 // Initialize mapboxgl map and insert into mapcontainer div:
@@ -289,6 +294,7 @@ map.on('style.load', function() {
     $('#exits-button').addClass('active');
     map.setLayoutProperty('entries-layer', 'visibility','none');
     map.setLayoutProperty('exits-layer', 'visibility','visible');
+    closeChart();
   })
 
   $('#entries-button').click(function () {
@@ -296,6 +302,7 @@ map.on('style.load', function() {
     $('#entries-button').addClass('active');
     map.setLayoutProperty('entries-layer', 'visibility','visible');
     map.setLayoutProperty('exits-layer', 'visibility','none');
+    closeChart();
   })
 
 
@@ -306,6 +313,7 @@ map.on('style.load', function() {
       'min': 1,
       'max': 12,
       'slide': function(event,ui) {
+        closeChart();
         window['month'] = parseInt(ui.value);
         map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
         map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
@@ -364,8 +372,8 @@ map.on('style.load', function() {
                                         ['<=', ['number', ['get', 'perc_change_exits']], ui.values[1]],
                                         ['>=', ['number', ['get', 'perc_change_exits']], ui.values[0]]
                                       ]);
-        //temporary text box to see vals of range slider: delete later
-        $( "#price" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+
+        closeChart();
         $('#lower-range-limit').text(ui.values[0]+'%')
         $('#upper-range-limit').text(ui.values[1]+'%')
 
@@ -442,13 +450,13 @@ map.on('style.load', function() {
         var num_entries = hoveredFeature.properties.entries;
         var perc_change_entries = hoveredFeature.properties.perc_change_entries
         if (window['month'] == 1) {
-          var popupContent = `
+          window['popupContent'] = `
             <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
             <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
           `;
         } else {
-          var popupContent = `
+          window['popupContent'] = `
             <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
             <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
@@ -474,13 +482,13 @@ map.on('style.load', function() {
           var num_exits = hoveredFeature.properties.exits;
           var perc_change_exits = hoveredFeature.properties.perc_change_exits
           if (window['month'] == 1) {
-            var popupContent2 = `
+            window['popupContent2'] = `
               <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
               <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
               <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
             `;
           } else {
-            var popupContent2 = `
+            window['popupContent2'] = `
               <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
               <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
               <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
@@ -519,8 +527,11 @@ map.on('style.load', function() {
       }
   });
 
-  //If the circle is clicked on, show the trendline:
-  // TO DO: fix this logic: on click of hoveredFeature
+  // Create a popup for the click action, but don't add it to the map yet.
+  window['popup_click'] = new mapboxgl.Popup({
+    closeOnClick: false
+  });
+
   map.on('click', 'entries-layer', function(e) {
     closeNav(); //having both sidenav and linechart open at the same time would be too cluttered
 
@@ -529,6 +540,7 @@ map.on('style.load', function() {
         layers: ['entries-layer'],
     });
     var clickedFeature = features[0]
+    var clickedStation = clickedFeature.properties.stop_name
     // then get all clicked station's data by querying the source features for all months' data for that complex_id
     var clickedFeature_queryResults = map.querySourceFeatures('activity-data', {
       filter: ['==', ['number', ['get', 'complex_id']], clickedFeature.properties.complex_id]
@@ -543,7 +555,7 @@ map.on('style.load', function() {
 
     // Create an array with the average number of entries per month for all stations and clicked station's entries per month:
     var avg_entries = [
-      ['Month', 'Avg (all stations)', 'Total (this station)'],
+      ['Month', 'All', 'This'],
       ['Jan', 324129, clickedFeature_data[0].properties.entries],
       ['Feb', 303832, clickedFeature_data[1].properties.entries],
       ['Mar', 172456, clickedFeature_data[2].properties.entries],
@@ -565,21 +577,50 @@ map.on('style.load', function() {
       var data = google.visualization.arrayToDataTable(avg_entries);
 
       // Optional; add a title and set the width and height of the chart
-      var options = {'title': 'Entries', 'width':600, 'height':'35%',
-                'series': {
-                  0: {color: 'black'},
-                  1: {color: 'black', lineDashStyle: [2, 2]}
-                }
-              };
+      var options = {
+        'title': `Average Entries (All Stations), Total Entries (${clickedStation})`,
+        'titleTextStyle': {
+            'color': 'white'
+        },
+        'width':600,
+        'height':'35%',
+        'backgroundColor': '#585858', //'#F5F5F5', //'transparent',
+        'vAxis': {
+          'gridlines': {
+                'color': 'black'
+          },
+          'textStyle': {
+            'color': 'white'
+          }
+        },
+        'hAxis': {
+          'textStyle': {
+            'color': 'white'
+          }
+        },
+        'series': {
+          0: {color: 'white', lineWidth: 4},
+          1: {color: 'white', lineDashStyle: [10, 2]}
+        },
+        'legend': {
+          'textStyle': {
+            'color': 'white'
+          }
+        }
+      };
 
       // Display the chart inside the div element with id='line-chart'
       var chart = new google.visualization.LineChart(document.getElementById('line-chart'));
       chart.draw(data, options);
     }
 
-    // Draw and show the line chart here:
-    document.getElementById("line-chart").style.width = "600px";
+    // Show the line chart here:
+    document.getElementById("line-chart-div").style.width = "600px";
+
+    popup_click.setLngLat(clickedFeature.geometry.coordinates).setHTML(window['popupContent']).addTo(map)
 
   });
+
+
 
 })
