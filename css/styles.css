@@ -54,6 +54,26 @@ body {
   display: inline;
 }
 
+.sidenav-button {
+  border-radius: 0px 30px 30px 0px;
+  background-color: gray;
+  font-style: italic;
+  color: white;
+  font-size: 13px;
+  padding-right: 8px;
+  border-width: 0.5px;
+  margin-top: 4px;
+  border-left-width: 0px;
+}
+
+.sidenav-button:focus {
+  outline:0;
+}
+
+.sidenav-button-active {
+  background-color: #111; /* same as background color for sidenav menu */
+}
+
 /* The side navigation menu - originally hidden*/
 #sidenav-menu {
   height: 100%; /* 100% Full-height */
@@ -70,12 +90,13 @@ body {
 
 #sidenav-menu p {
   width: 250px; /* Keeps the width of the text fixed to get rid of 'text squishing' effect on transition */
-  padding: 8px 8px 8px 32px;
+  padding: 10px;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13px;
   color: #818181;
   display: block;
   transition: 0.3s;
+  text-align: justify;
 }
 
 /* Position and style the close button (top left corner) */
@@ -183,6 +204,11 @@ body {
   z-index: 3;
 }
 
-.mapboxgl-popup-close-button { /* not working, delete?? 
-  outline: none;
+.mapboxgl-popup-close-button {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.mapboxgl-popup-close-button:focus { /* removes default button highlight on popup open */
+  outline: 0;
 }

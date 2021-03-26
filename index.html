@@ -22,7 +22,14 @@
 
   <div id='sidenav-menu'>
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <p class='sidenav-menu-text'>WELCOME text here. ID=sidenav-menu</p>
+    <p class='sidenav-menu-text'>During the Covid-19 pandemic in 2020, the NYC subway system saw a drastic decrease in ridership.
+      Explore ridership by month in 2020 using this map.<br><br>
+      <span style='font-size: 15px; font-weight: bold; text-decoration: underline;'>Toggle</span> between showing the number of entries or exits (ridership) by station on the map using the buttons.<br><br>
+      <span style='font-size: 15px; font-weight: bold; text-decoration: underline;'>Slide</span> to show ridership change over 2020.<br><br>
+      <span style='font-size: 15px; font-weight: bold; text-decoration: underline;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
+      <span style='font-size: 15px; font-weight: bold; text-decoration: underline;'>Hover</span> to see ridership at that station for that month.<br><br>
+      <span style='font-size: 15px; font-weight: bold; text-decoration: underline;'>Click</span> to compare ridership at that station to average ridership across all stations for all of 2020.
+    </p>
   </div>
 
   <p id='about-menu-button-text' style="display:none;">Sidenav menu text here. ID=ABOUT menu</p>
@@ -42,7 +49,7 @@
       <div id='sidenav-buttons'>
         <button class="sidenav-button" id="context-menu-button" onclick="openNav()" >
           <span class='original'>Why</span>
-          <span class='onhover'>Why explore this map?</span>
+          <span id='context-onhover' class='onhover'>Why explore this map?</span>
         </button>
         <button class="sidenav-button" id="about-menu-button" onclick="openNav()" >
           <span class='original'>What</span>

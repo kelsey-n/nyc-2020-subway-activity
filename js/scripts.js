@@ -15,10 +15,26 @@ function openNav() {
   document.getElementById("legend-controls").style.left = "400px";
   document.getElementById("sidenav-buttons").style.left = "250px";
   $('.sidenav-button').click(function() {
+    $('.sidenav-button').removeClass('sidenav-button-active');
     var button_id = $(this).attr('id') //pull out the id name of the clicked sidenav button
     var menu_text = $(`#${button_id}-text`).text(); //get the menu text for the clicked button
     $(".sidenav-menu-text").text(menu_text); //populate the sidenav menu with the appropriate text
-    // TO DO: style the clicked button here:
+    // style the clicked button here:
+    $(`#${button_id}`).addClass('sidenav-button-active');
+    if (button_id === 'context-menu-button') {
+      $(this).text('Why explore this map?')
+    } else {
+      $('#context-menu-button').text('Why')
+    }
+    // if (button_id === 'about-menu-button') {
+    //   $(this).text('What am I looking at?')
+    // }
+    // else if (button_id === 'usemap-menu-button') {
+    //   $(this).text('How to use this map')
+    // }
+    // else if (button_id === 'legend-menu-button') {
+    //   $(this).text('Legend')
+    // }
   });
   document.getElementById("line-chart-div").style.width = "0"; //having both sidenav and linechart open at same time would be too cluttered
 }
@@ -29,6 +45,7 @@ function closeNav() {
   document.getElementById("grid-container").style.marginLeft = "0";
   document.getElementById("legend-controls").style.left = "150px";
   document.getElementById("sidenav-buttons").style.left = "0px";
+  $('.sidenav-button').removeClass('sidenav-button-active');
 }
 
 function closeChart() {
@@ -532,11 +549,19 @@ map.on('style.load', function() {
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
           `;
         } else {
+          // dynamically populate the percentage change string for the popup using arrows to indicate if an increase/decrease happened from prev month
+          if (perc_change_entries < 0) {
+            var perc_change_entries_string = `&#129035;${perc_change_entries*-1}% from ${months[window['month']-2]}`
+          } else if (perc_change_entries > 0) {
+            var perc_change_entries_string = `&#129033;${perc_change_entries}% from ${months[window['month']-2]}`
+          } else {
+            var perc_change_entries_string = `No change from ${months[window['month']-2]}`
+          }
           window['popupContent'] = `
             <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
             <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
             <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries}% change from ${months[window['month']-2]}</div>
+            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries_string}</div>
           `;
         };
 
@@ -564,11 +589,19 @@ map.on('style.load', function() {
               <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
             `;
           } else {
+            // dynamically populate the percentage change string for the popup using arrows to indicate if an increase/decrease happened from prev month
+            if (perc_change_exits < 0) {
+              var perc_change_exits_string = `&#129035;${perc_change_exits*-1}% from ${months[window['month']-2]}`
+            } else if (perc_change_exits > 0) {
+              var perc_change_exits_string = `&#129033;${perc_change_exits}% from ${months[window['month']-2]}`
+            } else {
+              var perc_change_exits_string = `No change from ${months[window['month']-2]}`
+            }
             window['popupContent2'] = `
               <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
               <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
               <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
-              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits}% change from ${months[window['month']-2]}</div>
+              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits_string}</div>
             `;
           }
 
@@ -654,7 +687,7 @@ map.on('style.load', function() {
 
       // Optional; add a title and set the width and height of the chart
       var options = {
-        'title': `Average Entries (All Stations), Total Entries (${clickedStation})`,
+        'title': `Average Entries (All Stations), Total Entries (This Station: ${clickedStation})`,
         'titleTextStyle': {
             'color': 'white'
         },
@@ -756,7 +789,7 @@ map.on('style.load', function() {
 
       // Optional; add a title and set the width and height of the chart
       var options = {
-        'title': `Average Exits (All Stations), Total Exits (${clickedStation})`,
+        'title': `Average Exits (All Stations), Total Exits (This Station: ${clickedStation})`,
         'titleTextStyle': {
             'color': 'white'
         },
