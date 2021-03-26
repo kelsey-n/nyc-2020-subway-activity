@@ -16,7 +16,7 @@ body {
 /* Try grid-container::before to put opaque cover on grid-container on load, then remove on click 'Explore' button */
 
 a:visited {
-  color: #5D3FD3;
+  color: #5D3FD3; /*color for links in 'About' menu */
 }
 
 #mapcontainer {
@@ -30,7 +30,7 @@ a:visited {
   position: fixed;
   margin-left: 10px;
   color: #585858;
-  font-size: 7vh;
+  font-size: 7vh; /* make font size dynamic for different heights of header */
   font-family: 'Inconsolata', monospace;
   font-weight: 600;
 }
@@ -48,20 +48,18 @@ a:visited {
   display: block;
 }
 
-/* Hover control for buttons */
+/* Hover control for buttons - hide/show different text span classes */
 #sidenav-buttons button .onhover {
   display: none;
 }
-
 #sidenav-buttons button:hover .original {
   display: none;
 }
-
 #sidenav-buttons button:hover .onhover {
   display: inline;
 }
 
-.sidenav-button {
+.sidenav-button { /* style menu buttons */
   border-radius: 0px 30px 30px 0px;
   background-color: gray;
   font-style: italic;
@@ -74,7 +72,7 @@ a:visited {
 }
 
 .sidenav-button:focus {
-  outline:0;
+  outline:0; /* removes default button highlighting */
 }
 
 .sidenav-button-active {
@@ -123,15 +121,16 @@ a:visited {
   text-decoration: none;
 }
 
-#legend-controls {
+#map-controls {
   top: 10%;
   right: 20px;
+  width: 300px;
   position: fixed;
   z-index: 1; /* places controls on top of map container */
   transition: right .5s;
 }
 
-#legend-controls::before {
+#map-controls::before {
   content: "";
   background-color: white;
   opacity: 0.8;
@@ -143,18 +142,18 @@ a:visited {
   border-radius: 10px;
 }
 
-.legend-controls-content {
+.map-controls-content {
   position: relative; /* places content inside the map controls on top of partly transparent background */
   padding: 15px;
 }
 
 #active-month{
-  margin-top: 8px;
-  padding-left: 40px;
+  margin-top: 0;
+  padding-left: 10px;
 }
 
 #slider-month {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 #upper-range-limit {
@@ -176,7 +175,7 @@ a:visited {
 }
 
 #refresh-button {
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 .ui-slider:hover {
@@ -193,23 +192,17 @@ a:visited {
 
 /* The trendline - originally hidden*/
 #line-chart-div {
-  /*height: 300; /* 100% Full-height */
   width: 0; /* 0 width - change this with jquery */
   position: fixed; /* Stay in place */
   z-index: 2; /* Stay on top */
   bottom: 0; /* Position at the bottom of the page */
   left: 0;
-  /*background-color: #111; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   overflow-y: hidden; /* disable vertical scroll */
-  /*padding-top: 0px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the chart */
 }
 
-#line-chart {
-}
-
-#chartclosebtn {
+#chartclosebtn { /* to absolutely position this button, which was previously styled with .closebtn class */
   position: absolute;
   margin-top: -5px;
   margin-left: 550px;
@@ -225,7 +218,7 @@ a:visited {
   outline: 0;
 }
 
-.legend-station-color {
+.legend-station-color { /* style subway line circles in legend menu */
   height: 25px;
   width: 25px;
   font-weight: bold;
@@ -237,7 +230,7 @@ a:visited {
   padding-top: 2px;
 }
 
-.legend-station-color-yellow {
+.legend-station-color-yellow { /* black font in yellow lines */
   height: 25px;
   width: 25px;
   font-weight: bold;

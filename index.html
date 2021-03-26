@@ -7,7 +7,6 @@
   <title>2020 Subway Ridership - NYC</title>
 
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-darkness/jquery-ui.css" rel = "stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -30,6 +29,7 @@
 
   <div id='sidenav-menu'>
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <!-- Default text when user first loads page - brief context and instructions -->
     <p class='sidenav-menu-text'> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Welcome!</span><br>
       During the Covid-19 pandemic in 2020, the NYC subway system saw a drastic decrease in ridership.
       Explore ridership by month in 2020 using this map.<br><br>
@@ -40,6 +40,7 @@
     </p>
   </div>
 
+  <!-- Text for each menu button -->
   <p id='about-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>About</span><br>
     This map was created using
     <a target="_blank" rel="noopener noreferrer"
@@ -101,6 +102,7 @@
     <span style='color: white; font-size: 30px; opacity: 0.75'><i class="fas fa-circle"></i></span> 1,000,000<br>
   </p>
 
+  <!-- Div to draw line chart in - initially hidden -->
   <div id=line-chart-div>
     <a href="javascript:void(0)" class="closebtn" id='chartclosebtn' onclick="closeChart()">&times;</a>
     <div id="line-chart"></div>
@@ -110,6 +112,7 @@
 
     <div id='mapcontainer'>
 
+      <!-- Buttons to open menu (side navigation) and populate with the relevant text for that menu button  -->
       <div id='sidenav-buttons'>
         <button class="sidenav-button" id="context-menu-button" onclick="openNav()" >
           <span class='original'>Why</span>
@@ -133,11 +136,10 @@
         </button>
       </div>
 
-      <div id='legend-controls'>
-        <div class='legend-controls-content'>
-          <h3>showing ridership
-          </h3>
-          <h4>for:<label id='active-month'>January</label></h4>
+      <!-- Map controls for filtering map data -->
+      <div id='map-controls'>
+        <div class='map-controls-content'>
+          <h4>Ridership in: <label id='active-month'>January</label></h4>
           <div id='slider-month'></div>
         </div>
           <div id='range-filter-content'>
@@ -147,7 +149,7 @@
             <text id='lower-range-limit'>-100%</text>
             <text id='upper-range-limit'>100%</text>
           </div>
-          <div class='legend-controls-content'>
+          <div class='map-controls-content'>
           <button type="button" id='refresh-button' class="btn btn-outline-dark btn-sm">Refresh Timeline</button>
           </div>
       </div>
@@ -156,9 +158,7 @@
 
   </div>
 
-  <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
   <script
@@ -166,7 +166,6 @@
     integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
     crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <!-- <script src = "https://code.jquery.com/jquery-1.10.2.js"></script> -->
   <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
   <script src="https://kit.fontawesome.com/37a64de4b3.js" crossorigin="anonymous"></script>

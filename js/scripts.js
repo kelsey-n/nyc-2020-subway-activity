@@ -10,6 +10,7 @@ function openNav() {
   // Set the width of the side navigation to be viewable at 250px and move the sidenav buttons over 250px:
   document.getElementById("sidenav-menu").style.width = "250px";
   document.getElementById("sidenav-buttons").style.left = "250px";
+  // Depending on which sidenav button was clicked, populate the menu with the relevant text
   $('.sidenav-button').click(function() {
     $('.sidenav-button').removeClass('sidenav-button-active'); //remove styling from any previously selected button
     var button_id = $(this).attr('id') //pull out the id name of the clicked sidenav button
