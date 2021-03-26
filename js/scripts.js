@@ -709,7 +709,7 @@ map.on('style.load', function() {
         },
         'series': {
           0: {color: 'white', lineWidth: 4},
-          1: {color: 'white', lineDashStyle: [10, 2]}
+          1: {color: 'yellow', lineDashStyle: [10, 2]}
         },
         'legend': {
           'textStyle': {
@@ -767,18 +767,18 @@ map.on('style.load', function() {
     // Create an array with the average number of entries per month for all stations and clicked station's entries per month:
     var avg_exits = [
       ['Month', 'All', 'This'],
-      ['Jan', 324129, clickedFeature_data[0].properties.exits],
-      ['Feb', 303832, clickedFeature_data[1].properties.exits],
-      ['Mar', 172456, clickedFeature_data[2].properties.exits],
-      ['Apr', 28642, clickedFeature_data[3].properties.exits],
-      ['May', 36865, clickedFeature_data[4].properties.exits],
-      ['Jun', 56228, clickedFeature_data[5].properties.exits],
-      ['Jul', 74855, clickedFeature_data[6].properties.exits],
-      ['Aug', 79574, clickedFeature_data[7].properties.exits],
-      ['Sep', 95799, clickedFeature_data[8].properties.exits],
-      ['Oct', 106166, clickedFeature_data[9].properties.exits],
-      ['Nov', 95193, clickedFeature_data[10].properties.exits],
-      ['Dec', 77912, clickedFeature_data[11].properties.exits]
+      ['Jan', 263262, clickedFeature_data[0].properties.exits],
+      ['Feb', 247600, clickedFeature_data[1].properties.exits],
+      ['Mar', 145772, clickedFeature_data[2].properties.exits],
+      ['Apr', 31285, clickedFeature_data[3].properties.exits],
+      ['May', 39907, clickedFeature_data[4].properties.exits],
+      ['Jun', 58708, clickedFeature_data[5].properties.exits],
+      ['Jul', 78080, clickedFeature_data[6].properties.exits],
+      ['Aug', 84254, clickedFeature_data[7].properties.exits],
+      ['Sep', 96981, clickedFeature_data[8].properties.exits],
+      ['Oct', 106866, clickedFeature_data[9].properties.exits],
+      ['Nov', 97638, clickedFeature_data[10].properties.exits],
+      ['Dec', 81082, clickedFeature_data[11].properties.exits]
     ]
 
     google.charts.setOnLoadCallback(drawChart);
@@ -811,7 +811,7 @@ map.on('style.load', function() {
         },
         'series': {
           0: {color: 'white', lineWidth: 4},
-          1: {color: 'white', lineDashStyle: [10, 2]}
+          1: {color: 'yellow', lineDashStyle: [10, 2]}
         },
         'legend': {
           'textStyle': {
