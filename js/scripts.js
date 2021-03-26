@@ -72,7 +72,7 @@ var map = new mapboxgl.Map({
 // Add navigation control:
 map.addControl(new mapboxgl.NavigationControl({
   showCompass: false,
-  showZoom: true
+  showZoom: false
 }));
 
 // Create array to convert 'month' number in data to month word:
@@ -109,7 +109,7 @@ map.on('style.load', function() {
       'circle-radius': [
           'interpolate', ['linear'],
           ['get', 'entries'],
-          1000, 2,
+          20000, 2,
           100000, 7,
           500000, 10,
           700000, 12,
@@ -553,9 +553,9 @@ map.on('style.load', function() {
         } else {
           // dynamically populate the percentage change string for the popup using arrows to indicate if an increase/decrease happened from prev month
           if (perc_change_entries < 0) {
-            var perc_change_entries_string = `&#129035;${perc_change_entries*-1}% from ${months[window['month']-2]}`
+            var perc_change_entries_string = `<i class="fas fa-arrow-down"></i> ${perc_change_entries*-1}% from ${months[window['month']-2]}`
           } else if (perc_change_entries > 0) {
-            var perc_change_entries_string = `&#129033;${perc_change_entries}% from ${months[window['month']-2]}`
+            var perc_change_entries_string = `<i class="fas fa-arrow-up"></i> ${perc_change_entries}% from ${months[window['month']-2]}`
           } else {
             var perc_change_entries_string = `No change from ${months[window['month']-2]}`
           }

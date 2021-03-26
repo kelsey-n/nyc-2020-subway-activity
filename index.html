@@ -27,7 +27,6 @@
     <p class='sidenav-menu-text'> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Welcome!</span><br>
       During the Covid-19 pandemic in 2020, the NYC subway system saw a drastic decrease in ridership.
       Explore ridership by month in 2020 using this map.<br><br>
-      <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Toggle</span> between showing the number of entries or exits (ridership) by station using the buttons.<br><br>
       <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Slide</span> to show ridership change over months of 2020.<br><br>
       <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
       <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Hover</span> to see ridership at a station for that month.<br><br>
@@ -44,7 +43,10 @@
       href="https://qri.cloud/nyc-transit-data/turnstile_daily_counts_2020">qri
     </a>.<br><br>
     <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Ridership/Entries:</span> total number of entries recorded at all observed turnstiles at a specific station for a specific month <br><br>
-    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Percentage Change:</span> percentage change in number of entries for a specific month from the previous month
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Percentage Change:</span> percentage change in number of entries for a specific month from the previous month<br>
+      <i class="fas fa-arrow-up"></i> = positive change (increase)<br>
+      <i class="fas fa-arrow-down"></i> = negative change (decrease)<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Average Entries:</span> sum of entries at all stations (for one month) divided by number of stations<br>(this is only visible upon clicking a station on the map)
   </p>
   <p id='context-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Context</span><br>
     The Covid-19 pandemic in 2020 led to a rise in remote activity, and an unprecedented decline in demand for public transit.
@@ -52,14 +54,44 @@
     <br><br>Explore 2020 ridership by month in NYC using this map.
   </p>
   <p id='usemap-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Instructions</span><br>
-    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Toggle</span> between showing the number of entries or exits (ridership) by station using the buttons.<br><br>
-    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Slide</span> to change the monthly ridership visible on the map.<br><br>
-    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Slide</span> the first slider to change the ridership visible on the map by month.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Slide</span> the second slider to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
     <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Hover</span> on a station to see its ridership for that month.<br><br>
-    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Click</span> on a station to compare its yearly ridership to average yearly ridership across all stations.
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Click</span> on a station to compare its yearly ridership to average yearly ridership across all stations.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Reset</span> the range filter slider or month slider after use by clicking the Reset/Refresh button.<br><br>
   </p>
   <p id='legend-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Legend</span><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Subway Lines:</span><br>
+    <span class="legend-station-color" style='background-color: #0039A6'>A</span>
+    <span class="legend-station-color" style='background-color: #0039A6'>C</span>
+    <span class="legend-station-color" style='background-color: #0039A6'>E</span><br>
+    <span class="legend-station-color" style='background-color: #FF6319'>B</span>
+    <span class="legend-station-color" style='background-color: #FF6319'>D</span>
+    <span class="legend-station-color" style='background-color: #FF6319'>F</span>
+    <span class="legend-station-color" style='background-color: #FF6319'>M</span><br>
+    <span class="legend-station-color" style='background-color: #6CBE45'>G</span><br>
+    <span class="legend-station-color" style='background-color: #996633'>J</span>
+    <span class="legend-station-color" style='background-color: #996633'>Z</span><br>
+    <span class="legend-station-color" style='background-color: #A7A9AC'>L</span><br>
+    <span class="legend-station-color-yellow" style='background-color: #FCCC0A'>N</span>
+    <span class="legend-station-color-yellow" style='background-color: #FCCC0A'>Q</span>
+    <span class="legend-station-color-yellow" style='background-color: #FCCC0A'>R</span>
+    <span class="legend-station-color-yellow" style='background-color: #FCCC0A'>W</span><br>
+    <span class="legend-station-color" style='background-color: #808183'>S</span><br>
+    <span class="legend-station-color" style='background-color: #EE352E'>1</span>
+    <span class="legend-station-color" style='background-color: #EE352E'>2</span>
+    <span class="legend-station-color" style='background-color: #EE352E'>3</span><br>
+    <span class="legend-station-color" style='background-color: #00933C'>4</span>
+    <span class="legend-station-color" style='background-color: #00933C'>5</span>
+    <span class="legend-station-color" style='background-color: #00933C'>6</span><br>
+    <span class="legend-station-color" style='background-color: #B933AD'>7</span><br><br>
 
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Number of Entries:</span><br>
+    <span style='color: white; font-size: 4px; opacity: 0.7'><i class="fas fa-circle"></i></span> 20,000<br>
+    <span style='color: white; font-size: 10px; opacity: 0.7'><i class="fas fa-circle"></i></span> 100,000<br>
+    <span style='color: white; font-size: 16px; opacity: 0.7'><i class="fas fa-circle"></i></span> 500,000<br>
+    <span style='color: white; font-size: 21px; opacity: 0.7'><i class="fas fa-circle"></i></span> 700,000<br>
+    <span style='color: white; font-size: 30px; opacity: 0.7'><i class="fas fa-circle"></i></span> 1,000,000<br>
   </p>
 
   <div id=line-chart-div>
