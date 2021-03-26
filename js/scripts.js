@@ -4,58 +4,37 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoia25hbmFuIiwiYSI6ImNrbDlsMXNmNjI3MnEyb25yYjNre
 // Load google charts
 google.charts.load('current', {'packages':['corechart']});
 
-
-
 // This function will open the side navigation menu when user clicks on any of the floating menu buttons
 // and populate the menu with text relevant to the button that was clicked
 function openNav() {
-  // Set the width of the side navigation to be viewable at 250px, and set the left margin of the page content to 250px to shift page content over
+  // Set the width of the side navigation to be viewable at 250px and move the sidenav buttons over 250px:
   document.getElementById("sidenav-menu").style.width = "250px";
-  document.getElementById("grid-container").style.marginLeft = "250px";
-  document.getElementById("legend-controls").style.left = "400px";
   document.getElementById("sidenav-buttons").style.left = "250px";
   $('.sidenav-button').click(function() {
-    $('.sidenav-button').removeClass('sidenav-button-active');
+    $('.sidenav-button').removeClass('sidenav-button-active'); //remove styling from any previously selected button
     var button_id = $(this).attr('id') //pull out the id name of the clicked sidenav button
-    var menu_text = $(`#${button_id}-text`).html(); //get the menu html for the clicked button
+    var menu_text = $(`#${button_id}-text`).html(); //get the menu text and styling for the clicked button
     $(".sidenav-menu-text").html(menu_text); //populate the sidenav menu with the appropriate html
-    // style the clicked button here:
+    // style the clicked button:
     $(`#${button_id}`).addClass('sidenav-button-active');
-    // if (button_id === 'context-menu-button') {
-    //   $(this).text('Why explore this map?')
-    // } else {
-    //   $('#context-menu-button').addClass('sidenav-buttons')
-    // }
-    // if (button_id === 'about-menu-button') {
-    //   $(this).text('What am I looking at?')
-    // }
-    // else if (button_id === 'usemap-menu-button') {
-    //   $(this).text('How to use this map')
-    // }
-    // else if (button_id === 'legend-menu-button') {
-    //   $(this).text('Legend')
-    // }
   });
   document.getElementById("line-chart-div").style.width = "0"; //having both sidenav and linechart open at same time would be too cluttered
 }
 
+// Function to close the side navigaion
 // Set the width of the side navigation to 0 and the left margin of the page content to 0
 function closeNav() {
   document.getElementById("sidenav-menu").style.width = "0";
-  document.getElementById("grid-container").style.marginLeft = "0";
-  document.getElementById("legend-controls").style.left = "150px";
   document.getElementById("sidenav-buttons").style.left = "0px";
   $('.sidenav-button').removeClass('sidenav-button-active');
 }
 
+// Function to close the line chart
 function closeChart() {
   document.getElementById("line-chart-div").style.width = "0";
   popup_click.remove();
+  // clear the data source for clicked features
   map.getSource('highlight-clickedfeature-entries').setData({
-    'type': 'FeatureCollection',
-    'features': []
-  });
-  map.getSource('highlight-clickedfeature-exits').setData({
     'type': 'FeatureCollection',
     'features': []
   });
@@ -93,6 +72,7 @@ map.on('style.load', function() {
     map.addLayer(style)
   })
 
+  // add geojson source for ridership data:
   map.addSource('activity-data', {
     type: 'geojson',
     data: 'data/subwayactivitydata.geojson'
@@ -106,7 +86,7 @@ map.on('style.load', function() {
       'visibility': 'visible'
     },
     'paint': {
-      'circle-radius': [
+      'circle-radius': [ //style circle radius based on number of entries at that station
           'interpolate', ['linear'],
           ['get', 'entries'],
           20000, 2,
@@ -115,7 +95,7 @@ map.on('style.load', function() {
           700000, 12,
           1000000, 15,
         ],
-      'circle-color': [
+      'circle-color': [ //color circle based on its subway lines going
         'match',
         ['get', 'line_color'],
         'blue', '#0039A6',
@@ -132,47 +112,10 @@ map.on('style.load', function() {
       ],
       'circle-opacity': 0.75
     },
-    'filter': ['==', ['number', ['get', 'month']], 1]
+    'filter': ['==', ['number', ['get', 'month']], 1] //default filter on map load is for month 1 (Jan)
   })
 
-  map.addLayer({
-    'id': 'exits-layer',
-    'type': 'circle',
-    'source': 'activity-data',
-    'layout': {
-      'visibility': 'none'
-    },
-    'paint': {
-      'circle-radius': [
-          'interpolate', ['linear'],
-          ['get', 'exits'],
-          1000, 2,
-          100000, 7,
-          500000, 10,
-          700000, 12,
-          1000000, 15,
-        ],
-      'circle-color': [
-        'match',
-        ['get', 'line_color'],
-        'blue', '#0039A6',
-        'brown', '#996633',
-        'gray', '#A7A9AC',
-        'green', '#00933C',
-        'lightgreen', '#6CBE45',
-        'orange', '#FF6319',
-        'purple', '#B933AD',
-        'red', '#EE352E',
-        'shuttlegray', '#808183',
-        'yellow', '#FCCC0A',
-        'white' //'multiple' line_colors
-      ],
-      'circle-opacity': 0.75
-    },
-    'filter': ['==', ['number', ['get', 'month']], 1]
-  })
-
-  // add an empty data source, which we will use to highlight the station that the user is hovering over in the entries layer
+  // add an empty data source, which we will use to highlight the station that the user is hovering over
   map.addSource('highlight-feature-entries', {
     type: 'geojson',
     data: {
@@ -181,13 +124,13 @@ map.on('style.load', function() {
     }
   });
 
-  // add a layer for the highlighted station in the entries layer
+  // add a layer for the hovered station
   map.addLayer({
     id: 'highlight-station-entries',
     type: 'circle',
     source: 'highlight-feature-entries',
     paint: {
-      'circle-radius': [
+      'circle-radius': [ //use same data styling as for original entries layer
           'interpolate', ['linear'],
           ['get', 'entries'],
           1000, 2,
@@ -196,7 +139,7 @@ map.on('style.load', function() {
           700000, 12,
           1000000, 15,
         ],
-      'circle-stroke-color': [
+      'circle-stroke-color': [ //add circle stroke so hovered station appears slightly larger than original circle
           'match',
           ['get', 'line_color'],
           'blue', '#0039A6',
@@ -211,66 +154,7 @@ map.on('style.load', function() {
           'yellow', '#FCCC0A',
           'white' //'multiple' line_colors
         ],
-      'circle-color': [
-        'match',
-        ['get', 'line_color'],
-        'blue', '#0039A6',
-        'brown', '#996633',
-        'gray', '#A7A9AC',
-        'green', '#00933C',
-        'lightgreen', '#6CBE45',
-        'orange', '#FF6319',
-        'purple', '#B933AD',
-        'red', '#EE352E',
-        'shuttlegray', '#808183',
-        'yellow', '#FCCC0A',
-        'white' //'multiple' line_colors
-      ],
-      'circle-stroke-width': 1.5, //stroke color and stroke width give the effect of the circle becoming slightly larger upon hovering
-    },
-    'circle-opacity': 1
-  });
-
-  // add an empty data source, which we will use to highlight the station that the user is hovering over in the exits layer
-  map.addSource('highlight-feature-exits', {
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features: []
-    }
-  });
-
-  // add a layer for the highlighted station in the exits layer
-  map.addLayer({
-    id: 'highlight-station-exits',
-    type: 'circle',
-    source: 'highlight-feature-exits',
-    paint: {
-      'circle-radius': [
-          'interpolate', ['linear'],
-          ['get', 'exits'],
-          1000, 2,
-          100000, 7,
-          500000, 10,
-          700000, 12,
-          1000000, 15,
-        ],
-      'circle-stroke-color': [
-          'match',
-          ['get', 'line_color'],
-          'blue', '#0039A6',
-          'brown', '#996633',
-          'gray', '#A7A9AC',
-          'green', '#00933C',
-          'lightgreen', '#6CBE45',
-          'orange', '#FF6319',
-          'purple', '#B933AD',
-          'red', '#EE352E',
-          'shuttlegray', '#808183',
-          'yellow', '#FCCC0A',
-          'white' //'multiple' line_colors
-        ],
-      'circle-color': [
+      'circle-color': [ //use same data styling as for original entries layer
         'match',
         ['get', 'line_color'],
         'blue', '#0039A6',
@@ -305,7 +189,7 @@ map.on('style.load', function() {
     type: 'circle',
     source: 'highlight-clickedfeature-entries',
     paint: {
-      'circle-radius': [
+      'circle-radius': [ //use same data styling as for original entries layer
           'interpolate', ['linear'],
           ['get', 'entries'],
           1000, 2,
@@ -314,8 +198,8 @@ map.on('style.load', function() {
           700000, 12,
           1000000, 15,
         ],
-      'circle-stroke-color': 'black',
-      'circle-color': [
+      'circle-stroke-color': 'black', //black circle outline to highlight clicked station
+      'circle-color': [ //use same data styling as for original entries layer
         'match',
         ['get', 'line_color'],
         'blue', '#0039A6',
@@ -330,146 +214,68 @@ map.on('style.load', function() {
         'yellow', '#FCCC0A',
         'white' //'multiple' line_colors
       ],
-      'circle-stroke-width': 2, //stroke color and stroke width give the effect of the circle becoming slightly larger upon hovering
+      'circle-stroke-width': 2, //circle stroke highlights clicked station
     },
     'circle-opacity': 1
   });
 
-  // add an empty data source, which we will use to highlight the station that the user has clicked on in the exits layer
-  map.addSource('highlight-clickedfeature-exits', {
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features: []
-    }
-  });
+  window['month'] = 1; //initial month value is 1 - January
 
-  // add a layer for the highlighted station in the exits layer
-  map.addLayer({
-    id: 'highlight-clickedstation-exits',
-    type: 'circle',
-    source: 'highlight-clickedfeature-exits',
-    paint: {
-      'circle-radius': [
-          'interpolate', ['linear'],
-          ['get', 'exits'],
-          1000, 2,
-          100000, 7,
-          500000, 10,
-          700000, 12,
-          1000000, 15,
-        ],
-      'circle-stroke-color': 'black',
-      'circle-color': [
-        'match',
-        ['get', 'line_color'],
-        'blue', '#0039A6',
-        'brown', '#996633',
-        'gray', '#A7A9AC',
-        'green', '#00933C',
-        'lightgreen', '#6CBE45',
-        'orange', '#FF6319',
-        'purple', '#B933AD',
-        'red', '#EE352E',
-        'shuttlegray', '#808183',
-        'yellow', '#FCCC0A',
-        'white' //'multiple' line_colors
-      ],
-      'circle-stroke-width': 2, //stroke color and stroke width give the effect of the circle becoming slightly larger upon hovering
-    },
-    'circle-opacity': 1
-  });
-
-
-  $('#exits-button').click(function () {
-    $('#entries-button').removeClass('active');
-    $('#exits-button').addClass('active');
-    map.setLayoutProperty('entries-layer', 'visibility','none');
-    map.setLayoutProperty('exits-layer', 'visibility','visible');
-    closeChart();
-  })
-
-  $('#entries-button').click(function () {
-    $('#exits-button').removeClass('active');
-    $('#entries-button').addClass('active');
-    map.setLayoutProperty('entries-layer', 'visibility','visible');
-    map.setLayoutProperty('exits-layer', 'visibility','none');
-    closeChart();
-  })
-
-
-  window['month'] = 1;
-
+  // Function to adjust the layer's filter based on month slider position
   $(function() {
     $( "#slider-month" ).slider({
       'min': 1,
       'max': 12,
       'slide': function(event,ui) {
-        closeChart();
-        window['month'] = parseInt(ui.value);
-        map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
-        map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
+        closeChart(); //close line chart, if open
+        window['month'] = parseInt(ui.value); //get the month value from the slider
+        map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]); //set layer filter for that month
 
         // Since sliding the month-slider automatically removes the range filter (if any), set button text to 'refresh timeline' and reset range limits:
         $('#refresh-button').text('Refresh Timeline');
         $('#lower-range-limit').text('-100%');
         $('#upper-range-limit').text('100%');
 
-        // represent the month in text here using months variable:
+        // represent the month in text here using global months variable:
         document.getElementById('active-month').innerText = months[window['month']-1];
         // insert the previous month into the range slider:
         document.getElementById('previous-month').innerText = months[window['month']-2];
 
-        if (window['month'] > 1) {
+        if (window['month'] > 1) { //if month slider is not Jan: enable range slider and set initial values to -100% and 100%
           $( "#slider-perc-range" ).slider("enable");
           $( "#slider-perc-range" ).slider( "values", 0, -100 );
           $( "#slider-perc-range" ).slider( "values", 1, 100 );
-          $('#range-filter-content').css('color', 'black');
-        }
-        else if (window['month'] === 1) {
-          $( "#slider-perc-range" ).slider("disable");
-          document.getElementById('previous-month').innerText = '--';
-          $('#range-filter-content').css('color', '#808080');
-        }
+          $('#range-filter-content').css('color', 'black'); //style enabled slider
+        } else if (window['month'] === 1) { //if month slider is Jan: disable range slider because percentage change not valid for Jan
+            $( "#slider-perc-range" ).slider("disable");
+            document.getElementById('previous-month').innerText = '--';
+            $('#range-filter-content').css('color', '#808080'); //style enabled slider
+          }
 
       }
     });
   });
 
-
-  // DONE: if month slider moves, reset range slider
-  //ISSUE: outliers only come back if month slider is moved, not if toggling between entries/exit layers
-  //SOLUTION: refresh button for range slider AND month slider - same button, vary text.
-  //reset range filter brings back all outliers, but toggling between layers does not. keep this way.
-  //first click: ALL stations (incl outliers) should reappear and range slider should be reset while staying in same mth & layer
-  //second click: month slider reset to jan
-  //($('#entries-button').hasClass('active')) {}
-  // ISSUE: outlier checkbox not working. default should be disabled; enabled when in a month with outlier vals
-
+  // Function to adjust layer filter based on range slider's position
   $(function() {
     $( "#slider-perc-range" ).slider({
-      'disabled': true,
+      'disabled': true, //disabled by default since default month is Jan
       'min': -100,
       'max': 100,
       'step': 1,
       'range': true,
       'values': [-100,100], //initial values for each handle of the range slider
       'slide': function(event,ui) {
+        // set the current filter to include only those stations that fall within the slider handles' values
         map.setFilter('entries-layer', ['all',
                                         ['==', ['number', ['get', 'month']], window['month']],
                                         ['<=', ['number', ['get', 'perc_change_entries']], ui.values[1]],
                                         ['>=', ['number', ['get', 'perc_change_entries']], ui.values[0]]
                                       ]);
 
-        map.setFilter('exits-layer', ['all',
-                                        ['==', ['number', ['get', 'month']], window['month']],
-                                        ['<=', ['number', ['get', 'perc_change_exits']], ui.values[1]],
-                                        ['>=', ['number', ['get', 'perc_change_exits']], ui.values[0]]
-                                      ]);
-
-        closeChart();
-        $('#lower-range-limit').text(ui.values[0]+'%')
-        $('#upper-range-limit').text(ui.values[1]+'%')
+        closeChart(); //close line chart if sliding range filter
+        $('#lower-range-limit').text(ui.values[0]+'%') //set text value of handle's position
+        $('#upper-range-limit').text(ui.values[1]+'%') //set text value of handle's position
 
         //if range slider is used, set text in refresh button to 'Reset range filter':
         $('#refresh-button').text('Reset Range Filter')
@@ -477,58 +283,40 @@ map.on('style.load', function() {
     });
   })
 
-  //$(".outlier-checkbox").checkboxradio({}); not sure why this is not working...
-
-  //NOT WORKING, maybe change this to a button with active/non active state, to match the entries/exits buttons
-  $('.outlier-checkbox').bind('change', function(){
-    if($(this).is(':checked')){
-      map.setFilter('entries-layer', ['all',
-                                      ['==', ['number', ['get', 'month']], window['month']],
-                                      ['>=', ['number', ['get', 'perc_change_entries']], 100],
-                                      ['<=', ['number', ['get', 'perc_change_entries']], -100]
-                                    ]);
-
-      map.setFilter('exits-layer', ['all',
-                                      ['==', ['number', ['get', 'month']], window['month']],
-                                      ['>=', ['number', ['get', 'perc_change_exits']], 100],
-                                      ['<=', ['number', ['get', 'perc_change_exits']], -100]
-                                    ]);
-    }
-  });
-
+  // Function to reset the layer filter when user clicks reset/refresh button
   $('#refresh-button').click(function () {
     closeChart();
     if ($('#refresh-button').text() === 'Refresh Timeline') {
-      $( "#slider-month" ).slider("value", 1);
+      $( "#slider-month" ).slider("value", 1); //reset the slider
       $( "#slider-perc-range" ).slider("disable");
-      document.getElementById('active-month').innerText = 'January';
+      document.getElementById('active-month').innerText = 'January'; //reset text in map controls
       document.getElementById('previous-month').innerText = '--';
       window['month'] = 1; //to reset popup content
-      map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]);
+      map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]); //reset filter on the map
       map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], 1]);
       $('#range-filter-content').css('color', '#808080');
-    }
-    else if ($('#refresh-button').text() === 'Reset Range Filter') {
-      $( "#slider-perc-range" ).slider( "values", 0, -100 );
-      $( "#slider-perc-range" ).slider( "values", 1, 100 );
-      map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
-      map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
-      $('#lower-range-limit').text('-100%');
-      $('#upper-range-limit').text('100%');
-      $('#refresh-button').text('Refresh Timeline')
-    }
+    } else if ($('#refresh-button').text() === 'Reset Range Filter') {
+        $( "#slider-perc-range" ).slider( "values", 0, -100 ); //reset the slider
+        $( "#slider-perc-range" ).slider( "values", 1, 100 );
+        map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]); //reset filter on the map
+        map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
+        $('#lower-range-limit').text('-100%'); //reset text in map controls
+        $('#upper-range-limit').text('100%');
+        $('#refresh-button').text('Refresh Timeline')
+      }
   })
 
-  // Create a popup, but don't add it to the map yet.
+  // Create a popup, but don't add it to the map yet. This will be the hover popup
   var popup = new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false
   });
 
+  // Function to query rendered features for the station the user is hovering over, then populate popup with that station's info
   map.on('mousemove', function(e) {
-      //query for the features under the mouse in both layers:
+      //query for the features under the mouse:
       var features = map.queryRenderedFeatures(e.point, {
-          layers: ['entries-layer', 'exits-layer'],
+          layers: ['entries-layer'],
       });
 
     // Check whether features exist
@@ -536,109 +324,63 @@ map.on('style.load', function() {
       map.getCanvas().style.cursor = 'pointer'; //change cursor to pointer if hovering over a circle/feature
 
       var hoveredFeature = features[0];
+      //Extract necessary variables:
       var station_name = hoveredFeature.properties.stop_name;
       var station_lines = hoveredFeature.properties.daytime_routes;
-      var id = hoveredFeature.id;
+      var num_entries = hoveredFeature.properties.entries;
+      var perc_change_entries = hoveredFeature.properties.perc_change_entries
 
-      // If we are in the entries layer:
-      if (hoveredFeature.layer.id === 'entries-layer') {
-        var num_entries = hoveredFeature.properties.entries;
-        var perc_change_entries = hoveredFeature.properties.perc_change_entries
-        if (window['month'] == 1) {
-          window['popupContent'] = `
-            <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-            <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
-          `;
+      if (window['month'] == 1) { //popup for Jan should not include percentage change value
+        //popup variable is global so we can access it in the click station function below
+        window['popupContent'] = `
+          <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+          <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
+        `;
+      } else { //months besides Jan should include perc change value
+        // dynamically populate the percentage change string for the popup using arrows to indicate whether an increase/decrease happened from prev month
+        if (perc_change_entries < 0) {
+          var perc_change_entries_string = `<i class="fas fa-arrow-down"></i> ${perc_change_entries*-1}% from ${months[window['month']-2]}`
+        } else if (perc_change_entries > 0) {
+          var perc_change_entries_string = `<i class="fas fa-arrow-up"></i> ${perc_change_entries}% from ${months[window['month']-2]}`
         } else {
-          // dynamically populate the percentage change string for the popup using arrows to indicate if an increase/decrease happened from prev month
-          if (perc_change_entries < 0) {
-            var perc_change_entries_string = `<i class="fas fa-arrow-down"></i> ${perc_change_entries*-1}% from ${months[window['month']-2]}`
-          } else if (perc_change_entries > 0) {
-            var perc_change_entries_string = `<i class="fas fa-arrow-up"></i> ${perc_change_entries}% from ${months[window['month']-2]}`
-          } else {
-            var perc_change_entries_string = `No change from ${months[window['month']-2]}`
-          }
-          window['popupContent'] = `
-            <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-            <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
-            <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries_string}</div>
-          `;
-        };
-
-        //fix the position of the popup as the position of the circle:
-        popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent).addTo(map);
-        //create and populate a feature with the properties of the hoveredFeature
-        var hoveredFeature_data = {
-          'type': 'Feature',
-          'geometry': hoveredFeature.geometry,
-          'properties': {
-            'entries': num_entries,
-            'line_color': hoveredFeature.properties.line_color
-          },
-        };
-        // set this circle's geometry and properties as the data for the highlight source
-        map.getSource('highlight-feature-entries').setData(hoveredFeature_data);
-
-      } else if (hoveredFeature.layer.id === 'exits-layer') {
-          var num_exits = hoveredFeature.properties.exits;
-          var perc_change_exits = hoveredFeature.properties.perc_change_exits
-          if (window['month'] == 1) {
-            window['popupContent2'] = `
-              <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-              <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
-            `;
-          } else {
-            // dynamically populate the percentage change string for the popup using arrows to indicate if an increase/decrease happened from prev month
-            if (perc_change_exits < 0) {
-              var perc_change_exits_string = `&#129035;${perc_change_exits*-1}% from ${months[window['month']-2]}`
-            } else if (perc_change_exits > 0) {
-              var perc_change_exits_string = `&#129033;${perc_change_exits}% from ${months[window['month']-2]}`
-            } else {
-              var perc_change_exits_string = `No change from ${months[window['month']-2]}`
-            }
-            window['popupContent2'] = `
-              <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-              <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
-              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_exits).format('0,0')} exits</div>
-              <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_exits_string}</div>
-            `;
-          }
-
-          //fix the position of the popup as the position of the circle:
-          popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent2).addTo(map);
-
-          //create and populate a feature with the properties of the hoveredFeature
-          var hoveredFeature_data = {
-            'type': 'Feature',
-            'geometry': hoveredFeature.geometry,
-            'properties': {
-              'exits': num_exits,
-              'line_color': hoveredFeature.properties.line_color
-            },
-          };
-          // set this circle's geometry and properties as the data for the highlight source
-          map.getSource('highlight-feature-exits').setData(hoveredFeature_data);
+          var perc_change_entries_string = `No change from ${months[window['month']-2]}`
         }
+        //popup variable is global so we can access it in the click station function below
+        window['popupContent'] = `
+          <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
+          <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
+          <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries_string}</div>
+        `;
+      };
 
-    } else { //if len(features) <1
-        // remove the Popup and change back to default cursor
+      //fix the position of the popup as the position of the circle:
+      popup.setLngLat(hoveredFeature.geometry.coordinates).setHTML(popupContent).addTo(map);
+      //create and populate a feature with the properties of the hoveredFeature necessary for data-driven styling of the highlight layer
+      var hoveredFeature_data = {
+        'type': 'Feature',
+        'geometry': hoveredFeature.geometry,
+        'properties': {
+          'entries': num_entries,
+          'line_color': hoveredFeature.properties.line_color
+        },
+      };
+      // set this circle's geometry and properties as the data for the highlight source
+      map.getSource('highlight-feature-entries').setData(hoveredFeature_data);
+
+      } else { //if len(features) <1
+        // remove the Popup, change back to default cursor and clear data from the highlight data source
         popup.remove();
         map.getCanvas().style.cursor = '';
         map.getSource('highlight-feature-entries').setData({
           'type': 'FeatureCollection',
           'features': []
-        });
-        map.getSource('highlight-feature-exits').setData({
-          'type': 'FeatureCollection',
-          'features': []
-        });
+        })
       }
   });
 
-  // Create a popup for the click action, but don't add it to the map yet.
+  // Create a popup for the click action, but don't add it to the map yet. Global var so we can close it in the closeChart() function
   window['popup_click'] = new mapboxgl.Popup({
     closeOnClick: false
   });
@@ -652,13 +394,14 @@ map.on('style.load', function() {
     });
     var clickedFeature = features[0]
     var clickedStation = clickedFeature.properties.stop_name
-    // then get all clicked station's data by querying the source features for all months' data for that complex_id
+    // then get all clicked station's data by querying the source data for all months' data for that complex_id
     var clickedFeature_queryResults = map.querySourceFeatures('activity-data', {
       filter: ['==', ['number', ['get', 'complex_id']], clickedFeature.properties.complex_id]
     });
     // querysourcefeatures sometimes returns dupes because of tile set characteristics, so take the first 12 to get each month only once:
     var clickedFeature_data = clickedFeature_queryResults.slice(0,12)
 
+    // Validation:
     // subwayactivitydata.geojson is sorted by complex_id asc then month ascending
     // checked: every complex id has 12 months (12 entries in the data) and every month has 426 complex ids, so data valid for this graphing
     // querysourcefeatures seems to always return the features in the order that they appear in the data source
@@ -687,15 +430,15 @@ map.on('style.load', function() {
     function drawChart() {
       var data = google.visualization.arrayToDataTable(avg_entries);
 
-      // Optional; add a title and set the width and height of the chart
+      // add chart formatting
       var options = {
         'title': `Average Entries (All Stations), Total Entries (This Station: ${clickedStation})`,
         'titleTextStyle': {
             'color': 'white'
         },
         'width':600,
-        'height':'35%',
-        'backgroundColor': '#585858', //'#F5F5F5', //'transparent',
+        'height':250,
+        'backgroundColor': '#585858',
         'vAxis': {
           'gridlines': {
                 'color': 'black'
@@ -728,7 +471,7 @@ map.on('style.load', function() {
     // Show the line chart here:
     document.getElementById("line-chart-div").style.width = "600px";
 
-    //create and populate a feature with the properties of the hoveredFeature
+    //create and populate a feature with the properties of the clickedFeature
     var clickedFeature_highlightData = {
       'type': 'Feature',
       'geometry': clickedFeature.geometry,
@@ -737,113 +480,10 @@ map.on('style.load', function() {
         'line_color': clickedFeature.properties.line_color
       },
     };
-    console.log(clickedFeature_highlightData)
-    // set this circle's geometry and properties as the data for the highlight source
+    // set this circle's geometry and properties as the data for the clicked highlight source
     map.getSource('highlight-clickedfeature-entries').setData(clickedFeature_highlightData);
 
     popup_click.setLngLat(clickedFeature.geometry.coordinates).setHTML(window['popupContent']).addTo(map)
-
-  });
-
-  map.on('click', 'exits-layer', function(e) {
-    closeNav(); //having both sidenav and linechart open at the same time would be too cluttered
-
-    // get the clicked station's complex_id by querying the rendered features
-    var features = map.queryRenderedFeatures(e.point, {
-        layers: ['exits-layer'],
-    });
-    var clickedFeature = features[0]
-    var clickedStation = clickedFeature.properties.stop_name
-    // then get all clicked station's data by querying the source features for all months' data for that complex_id
-    var clickedFeature_queryResults = map.querySourceFeatures('activity-data', {
-      filter: ['==', ['number', ['get', 'complex_id']], clickedFeature.properties.complex_id]
-    });
-    // querysourcefeatures sometimes returns dupes because of tile set characteristics, so take the first 12 to get each month only once:
-    var clickedFeature_data = clickedFeature_queryResults.slice(0,12)
-
-    // subwayactivitydata.geojson is sorted by complex_id asc then month ascending
-    // checked: every complex id has 12 months (12 entries in the data) and every month has 426 complex ids, so data valid for this graphing
-    // querysourcefeatures seems to always return the features in the order that they appear in the data source
-    // so we can assume that the first feature in clickedFeature_data is for month 1, etc.
-
-    // Create an array with the average number of entries per month for all stations and clicked station's entries per month:
-    var avg_exits = [
-      ['Month', 'All', 'This'],
-      ['Jan', 263262, clickedFeature_data[0].properties.exits],
-      ['Feb', 247600, clickedFeature_data[1].properties.exits],
-      ['Mar', 145772, clickedFeature_data[2].properties.exits],
-      ['Apr', 31285, clickedFeature_data[3].properties.exits],
-      ['May', 39907, clickedFeature_data[4].properties.exits],
-      ['Jun', 58708, clickedFeature_data[5].properties.exits],
-      ['Jul', 78080, clickedFeature_data[6].properties.exits],
-      ['Aug', 84254, clickedFeature_data[7].properties.exits],
-      ['Sep', 96981, clickedFeature_data[8].properties.exits],
-      ['Oct', 106866, clickedFeature_data[9].properties.exits],
-      ['Nov', 97638, clickedFeature_data[10].properties.exits],
-      ['Dec', 81082, clickedFeature_data[11].properties.exits]
-    ]
-
-    google.charts.setOnLoadCallback(drawChart);
-
-    // Draw the chart
-    function drawChart() {
-      var data = google.visualization.arrayToDataTable(avg_exits);
-
-      // Optional; add a title and set the width and height of the chart
-      var options = {
-        'title': `Average Exits (All Stations), Total Exits (This Station: ${clickedStation})`,
-        'titleTextStyle': {
-            'color': 'white'
-        },
-        'width':600,
-        'height':'35%',
-        'backgroundColor': '#585858', //'#F5F5F5', //'transparent',
-        'vAxis': {
-          'gridlines': {
-                'color': 'black'
-          },
-          'textStyle': {
-            'color': 'white'
-          }
-        },
-        'hAxis': {
-          'textStyle': {
-            'color': 'white'
-          }
-        },
-        'series': {
-          0: {color: 'white', lineWidth: 4},
-          1: {color: 'yellow', lineDashStyle: [10, 2]}
-        },
-        'legend': {
-          'textStyle': {
-            'color': 'white'
-          }
-        }
-      };
-
-      // Display the chart inside the div element with id='line-chart'
-      var chart = new google.visualization.LineChart(document.getElementById('line-chart'));
-      chart.draw(data, options);
-    }
-
-    // Show the line chart here:
-    document.getElementById("line-chart-div").style.width = "600px";
-
-    //create and populate a feature with the properties of the hoveredFeature
-    var clickedFeature_highlightData = {
-      'type': 'Feature',
-      'geometry': clickedFeature.geometry,
-      'properties': {
-        'exits': clickedFeature.properties.exits,
-        'line_color': clickedFeature.properties.line_color
-      },
-    };
-    console.log(clickedFeature_highlightData)
-    // set this circle's geometry and properties as the data for the highlight source
-    map.getSource('highlight-clickedfeature-exits').setData(clickedFeature_highlightData);
-
-    popup_click.setLngLat(clickedFeature.geometry.coordinates).setHTML(window['popupContent2']).addTo(map)
 
   });
 

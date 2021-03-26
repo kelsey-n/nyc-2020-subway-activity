@@ -66,7 +66,7 @@ a:visited {
   background-color: gray;
   font-style: italic;
   color: white;
-  font-size: 13px;
+  font-size: 14px;
   padding-right: 8px;
   border-width: 0.5px;
   margin-top: 4px;
@@ -125,10 +125,10 @@ a:visited {
 
 #legend-controls {
   top: 10%;
-  left: 400px;
+  right: 20px;
   position: fixed;
   z-index: 1; /* places controls on top of map container */
-  transition: left .5s;
+  transition: right .5s;
 }
 
 #legend-controls::before {
@@ -193,7 +193,7 @@ a:visited {
 
 /* The trendline - originally hidden*/
 #line-chart-div {
-  /*height: 35%; /* 100% Full-height */
+  /*height: 300; /* 100% Full-height */
   width: 0; /* 0 width - change this with jquery */
   position: fixed; /* Stay in place */
   z-index: 2; /* Stay on top */
@@ -206,10 +206,13 @@ a:visited {
   transition: 0.5s; /* 0.5 second transition effect to slide in the chart */
 }
 
+#line-chart {
+}
+
 #chartclosebtn {
   position: absolute;
-  margin-top: -10px;
-  margin-left: 573px;
+  margin-top: -5px;
+  margin-left: 550px;
   z-index: 3;
 }
 
@@ -226,6 +229,7 @@ a:visited {
   height: 25px;
   width: 25px;
   font-weight: bold;
+  font-family: sans-serif;
   color: white;
   border-radius: 50%;
   display: inline-block;
@@ -237,6 +241,7 @@ a:visited {
   height: 25px;
   width: 25px;
   font-weight: bold;
+  font-family: sans-serif;
   color: black;
   border-radius: 50%;
   display: inline-block;

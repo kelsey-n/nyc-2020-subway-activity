@@ -13,6 +13,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
 
 </head>
 
@@ -60,7 +66,7 @@
     <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Click</span> on a station to compare its yearly ridership to average yearly ridership across all stations.<br><br>
     <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Reset</span> the range filter slider or month slider after use by clicking the Reset/Refresh button.<br><br>
   </p>
-  <p id='legend-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Legend</span><br>
+  <p id='legend-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Legend</span>
     <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Subway Lines:</span><br>
     <span class="legend-station-color" style='background-color: #0039A6'>A</span>
     <span class="legend-station-color" style='background-color: #0039A6'>C</span>
@@ -84,14 +90,15 @@
     <span class="legend-station-color" style='background-color: #00933C'>4</span>
     <span class="legend-station-color" style='background-color: #00933C'>5</span>
     <span class="legend-station-color" style='background-color: #00933C'>6</span><br>
-    <span class="legend-station-color" style='background-color: #B933AD'>7</span><br><br>
+    <span class="legend-station-color" style='background-color: #B933AD'>7</span><br>
+    <span class="legend-station-color" style='background-color: white; vertical-align: middle;'></span> 2+ line colors<br><br>
 
     <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Number of Entries:</span><br>
-    <span style='color: white; font-size: 4px; opacity: 0.7'><i class="fas fa-circle"></i></span> 20,000<br>
-    <span style='color: white; font-size: 10px; opacity: 0.7'><i class="fas fa-circle"></i></span> 100,000<br>
-    <span style='color: white; font-size: 16px; opacity: 0.7'><i class="fas fa-circle"></i></span> 500,000<br>
-    <span style='color: white; font-size: 21px; opacity: 0.7'><i class="fas fa-circle"></i></span> 700,000<br>
-    <span style='color: white; font-size: 30px; opacity: 0.7'><i class="fas fa-circle"></i></span> 1,000,000<br>
+    <span style='color: white; font-size: 4px; opacity: 0.75'><i class="fas fa-circle"></i></span> 20,000<br>
+    <span style='color: white; font-size: 10px; opacity: 0.75'><i class="fas fa-circle"></i></span> 100,000<br>
+    <span style='color: white; font-size: 16px; opacity: 0.75'><i class="fas fa-circle"></i></span> 500,000<br>
+    <span style='color: white; font-size: 21px; opacity: 0.75'><i class="fas fa-circle"></i></span> 700,000<br>
+    <span style='color: white; font-size: 30px; opacity: 0.75'><i class="fas fa-circle"></i></span> 1,000,000<br>
   </p>
 
   <div id=line-chart-div>
@@ -128,9 +135,7 @@
 
       <div id='legend-controls'>
         <div class='legend-controls-content'>
-          <h3>showing
-            <button type="button" id='entries-button' class="btn btn-outline-dark btn-sm active" >Entries</button>
-            <button type="button" id='exits-button' class="btn btn-outline-dark btn-sm">Exits</button>
+          <h3>showing ridership
           </h3>
           <h4>for:<label id='active-month'>January</label></h4>
           <div id='slider-month'></div>
@@ -151,7 +156,6 @@
 
   </div>
 
-  <!-- go through these and delete unused ones -->
   <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
