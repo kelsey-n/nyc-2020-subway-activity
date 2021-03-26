@@ -27,11 +27,11 @@
     <p class='sidenav-menu-text'> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Welcome!</span><br>
       During the Covid-19 pandemic in 2020, the NYC subway system saw a drastic decrease in ridership.
       Explore ridership by month in 2020 using this map.<br><br>
-      <span style='font-size: 15px; text-decoration: underline; color: #f1f1f1;'>Toggle</span> between showing the number of entries or exits (ridership) by station using the buttons.<br><br>
-      <span style='font-size: 15px; text-decoration: underline; color: #f1f1f1;'>Slide</span> to show ridership change over months of 2020.<br><br>
-      <span style='font-size: 15px; text-decoration: underline; color: #f1f1f1;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
-      <span style='font-size: 15px; text-decoration: underline; color: #f1f1f1;'>Hover</span> to see ridership at a station for that month.<br><br>
-      <span style='font-size: 15px; text-decoration: underline; color: #f1f1f1;'>Click</span> to compare a station's yearly ridership to average yearly ridership across all stations.
+      <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Toggle</span> between showing the number of entries or exits (ridership) by station using the buttons.<br><br>
+      <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Slide</span> to show ridership change over months of 2020.<br><br>
+      <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
+      <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Hover</span> to see ridership at a station for that month.<br><br>
+      <span style='font-size: 14px; text-decoration: underline; color: #f1f1f1;'>Click</span> to compare a station's yearly ridership to average yearly ridership across all stations.
     </p>
   </div>
 
@@ -42,7 +42,9 @@
     by station and day by
     <a target="_blank" rel="noopener noreferrer"
       href="https://qri.cloud/nyc-transit-data/turnstile_daily_counts_2020">qri
-    </a>.
+    </a>.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Ridership/Entries:</span> total number of entries recorded at all observed turnstiles at a specific station for a specific month <br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Percentage Change:</span> percentage change in number of entries for a specific month from the previous month
   </p>
   <p id='context-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Context</span><br>
     The Covid-19 pandemic in 2020 led to a rise in remote activity, and an unprecedented decline in demand for public transit.
@@ -50,11 +52,11 @@
     <br><br>Explore 2020 ridership by month in NYC using this map.
   </p>
   <p id='usemap-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Instructions</span><br>
-    <span style='font-size: 15px; color: #f1f1f1; text-decoration: underline;'>Toggle</span> between showing the number of entries or exits (ridership) by station using the buttons.<br><br>
-    <span style='font-size: 15px; color: #f1f1f1; text-decoration: underline;'>Slide</span> to change the monthly ridership visible on the map.<br><br>
-    <span style='font-size: 15px; color: #f1f1f1; text-decoration: underline;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
-    <span style='font-size: 15px; color: #f1f1f1; text-decoration: underline;'>Hover</span> on a station to see its ridership for that month.<br><br>
-    <span style='font-size: 15px; color: #f1f1f1; text-decoration: underline;'>Click</span> on a station to compare its yearly ridership to average yearly ridership across all stations.
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Toggle</span> between showing the number of entries or exits (ridership) by station using the buttons.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Slide</span> to change the monthly ridership visible on the map.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Slide</span> to filter stations in one month for the percentage change in ridership from the previous month.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Hover</span> on a station to see its ridership for that month.<br><br>
+    <span style='font-size: 14px; color: #f1f1f1; text-decoration: underline;'>Click</span> on a station to compare its yearly ridership to average yearly ridership across all stations.
   </p>
   <p id='legend-menu-button-text' style="display:none;"> <span style='float: right; margin-top: -33px; font-size: 20px; color: #f1f1f1;'>Legend</span><br>
 
@@ -83,7 +85,11 @@
           <span class='onhover'>How to use this map</span>
         </button>
         <button class="sidenav-button" id="legend-menu-button" onclick="openNav()" >
-          <span class='original'>Circles here</span>
+          <span class='original'>
+            <i class="fas fa-circle" style='font-size: 8px; color: #FF6319'></i>
+            <i class="fas fa-circle" style='font-size: 11px; color: #6CBE45'></i>
+            <i class="fas fa-circle" style='font-size: 14px; color: #FCCC0A'></i>
+          </span>
           <span class='onhover'>Legend</span>
         </button>
       </div>
@@ -127,6 +133,7 @@
   <!-- <script src = "https://code.jquery.com/jquery-1.10.2.js"></script> -->
   <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+  <script src="https://kit.fontawesome.com/37a64de4b3.js" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="js/subway-layer-styles.js"></script>
   <script src="js/scripts.js"></script>
