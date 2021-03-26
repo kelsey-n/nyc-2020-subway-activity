@@ -17,15 +17,15 @@ function openNav() {
   $('.sidenav-button').click(function() {
     $('.sidenav-button').removeClass('sidenav-button-active');
     var button_id = $(this).attr('id') //pull out the id name of the clicked sidenav button
-    var menu_text = $(`#${button_id}-text`).text(); //get the menu text for the clicked button
-    $(".sidenav-menu-text").text(menu_text); //populate the sidenav menu with the appropriate text
+    var menu_text = $(`#${button_id}-text`).html(); //get the menu html for the clicked button
+    $(".sidenav-menu-text").html(menu_text); //populate the sidenav menu with the appropriate html
     // style the clicked button here:
     $(`#${button_id}`).addClass('sidenav-button-active');
-    if (button_id === 'context-menu-button') {
-      $(this).text('Why explore this map?')
-    } else {
-      $('#context-menu-button').text('Why')
-    }
+    // if (button_id === 'context-menu-button') {
+    //   $(this).text('Why explore this map?')
+    // } else {
+    //   $('#context-menu-button').addClass('sidenav-buttons')
+    // }
     // if (button_id === 'about-menu-button') {
     //   $(this).text('What am I looking at?')
     // }
@@ -410,8 +410,10 @@ map.on('style.load', function() {
         map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
         map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
 
-        // Since sliding the month-slider automatically removes the range filter (if any), set button text to 'refresh timeline':
-        $('#refresh-button').text('Refresh Timeline')
+        // Since sliding the month-slider automatically removes the range filter (if any), set button text to 'refresh timeline' and reset range limits:
+        $('#refresh-button').text('Refresh Timeline');
+        $('#lower-range-limit').text('-100%');
+        $('#upper-range-limit').text('100%');
 
         // represent the month in text here using months variable:
         document.getElementById('active-month').innerText = months[window['month']-1];
@@ -511,8 +513,8 @@ map.on('style.load', function() {
       $( "#slider-perc-range" ).slider( "values", 1, 100 );
       map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]);
       map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
-      $('#lower-range-limit').text('-100%')
-      $('#upper-range-limit').text('100%')
+      $('#lower-range-limit').text('-100%');
+      $('#upper-range-limit').text('100%');
       $('#refresh-button').text('Refresh Timeline')
     }
   })

@@ -15,6 +15,10 @@ body {
 
 /* Try grid-container::before to put opaque cover on grid-container on load, then remove on click 'Explore' button */
 
+a:visited {
+  color: #5D3FD3;
+}
+
 #mapcontainer {
   flex-grow: 1;
   grid-row-start: 2;
@@ -93,7 +97,8 @@ body {
 
 #sidenav-menu p {
   width: 250px; /* Keeps the width of the text fixed to get rid of 'text squishing' effect on transition */
-  padding: 10px;
+  padding-left: 25px;
+  padding-right: 25px;
   text-decoration: none;
   font-size: 13px;
   color: #818181;
@@ -110,6 +115,7 @@ body {
   color: #818181;
   display: block;
   transition: 0.3s;
+  padding-left: 15px;
 }
 
 .closebtn:hover {
