@@ -294,13 +294,11 @@ map.on('style.load', function() {
       document.getElementById('previous-month').innerText = '--';
       window['month'] = 1; //to reset popup content
       map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], 1]); //reset filter on the map
-      map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], 1]);
       $('#range-filter-content').css('color', '#808080');
     } else if ($('#refresh-button').text() === 'Reset Range Filter') {
         $( "#slider-perc-range" ).slider( "values", 0, -100 ); //reset the slider
         $( "#slider-perc-range" ).slider( "values", 1, 100 );
         map.setFilter('entries-layer', ['==', ['number', ['get', 'month']], window['month']]); //reset filter on the map
-        map.setFilter('exits-layer', ['==', ['number', ['get', 'month']], window['month']]);
         $('#lower-range-limit').text('-100%'); //reset text in map controls
         $('#upper-range-limit').text('100%');
         $('#refresh-button').text('Refresh Timeline')
@@ -327,7 +325,7 @@ map.on('style.load', function() {
       var hoveredFeature = features[0];
       //Extract necessary variables:
       var station_name = hoveredFeature.properties.stop_name;
-      var station_lines = hoveredFeature.properties.daytime_routes;
+      var station_lines = [hoveredFeature.properties.daytime_routes];
       var num_entries = hoveredFeature.properties.entries;
       var perc_change_entries = hoveredFeature.properties.perc_change_entries
 
@@ -335,7 +333,7 @@ map.on('style.load', function() {
         //popup variable is global so we can access it in the click station function below
         window['popupContent'] = `
           <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-          <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+          <div style = "font-family:sans-serif; font-size:11px; font-weight:600">Lines: ${station_lines}</div>
           <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
         `;
       } else { //months besides Jan should include perc change value
@@ -350,7 +348,7 @@ map.on('style.load', function() {
         //popup variable is global so we can access it in the click station function below
         window['popupContent'] = `
           <div style = "font-family:sans-serif; font-size:14px; font-weight:bold">${station_name}</div>
-          <div style = "font-family:sans-serif; font-size:11px; font-weight:600">(${station_lines})</div>
+          <div style = "font-family:sans-serif; font-size:11px; font-weight:600">Lines: ${station_lines}</div>
           <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${numeral(num_entries).format('0,0')} entries</div>
           <div style = "font-family:sans-serif; font-size:12px; font-weight:600">${perc_change_entries_string}</div>
         `;
