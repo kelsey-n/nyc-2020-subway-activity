@@ -134,7 +134,7 @@ map.on('style.load', function() {
       'circle-radius': [ //use same data styling as for original entries layer
           'interpolate', ['linear'],
           ['get', 'entries'],
-          1000, 2,
+          20000, 2,
           100000, 7,
           500000, 10,
           700000, 12,
@@ -193,7 +193,7 @@ map.on('style.load', function() {
       'circle-radius': [ //use same data styling as for original entries layer
           'interpolate', ['linear'],
           ['get', 'entries'],
-          1000, 2,
+          20000, 2,
           100000, 7,
           500000, 10,
           700000, 12,
