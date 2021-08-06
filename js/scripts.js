@@ -70,7 +70,7 @@ map.on('style.load', function() {
 
   // add layers by iterating over the styles in the array defined in subway-layer-styles.js
   subwayLayerStyles.forEach((style) => {
-    map.addLayer(style)
+    map.addLayer(style, "settlement-subdivision-label")
   })
 
   // add geojson source for ridership data:
@@ -114,7 +114,7 @@ map.on('style.load', function() {
       'circle-opacity': 0.75
     },
     'filter': ['==', ['number', ['get', 'month']], 1] //default filter on map load is for month 1 (Jan)
-  })
+  }, "settlement-subdivision-label");
 
   // add an empty data source, which we will use to highlight the station that the user is hovering over
   map.addSource('highlight-feature-entries', {
